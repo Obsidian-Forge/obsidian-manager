@@ -1,4 +1,4 @@
-简体中文 | [English]()
+简体中文 | [English](https://github.com/0011000000110010/obsidian-manager/blob/main/README.md)
 
 # Better Plugins Manager 插件介绍文档
 
