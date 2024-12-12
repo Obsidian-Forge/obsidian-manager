@@ -1,3 +1,5 @@
+简体中文 | [English]()
+
 # Better Plugins Manager 插件介绍文档
 
 ## 概览
