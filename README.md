@@ -1,31 +1,33 @@
 [简体中文](https://github.com/0011000000110010/obsidian-manager/blob/main/README_CN.md) | English
 
-# Better Plugins Manager 插件介绍文档
+# Better Plugins Manager Plugin Documentation
 
-## 概览
+## Overview
 
-Better Plugins Manager 是一款旨在提升插件管理体验的工具，它让您的插件管理变得更加直观和高效。以下是该插件的详细介绍。
+Better Plugins Manager is a tool designed to enhance the plugin management experience, making it more intuitive and efficient. Below is a detailed introduction to this plugin.
 
-## 功能特点
+## Features
 
-### 延时启动插件
+### Delayed Plugin Startup
 
-- **自定义延时**：您可以为插件设置延时启动，以便在应用启动时不会立即加载所有插件，从而提高启动速度和性能。
+- **Custom Delays**: You can set custom delays for plugins so that not all plugins are loaded immediately upon application startup, thereby improving startup speed and performance.
 
-### 更改名称和描述
+### Rename and Edit Descriptions
 
-- **插件重命名**：您可以更改插件的名称，以更好地反映其功能或您的个人偏好。
-- **描述编辑**：您可以编辑插件的描述，以提供更多关于插件功能的信息或根据您的使用情况进行个性化描述。
+- **Plugin Renaming**: You can change the name of a plugin to better reflect its functionality or your personal preferences.
+- **Description Editing**: You can edit the description of a plugin to provide more information about its functionality or to personalize it according to your usage.
 
-### 一键开启和关闭
+### One-Click Enable and Disable
 
-- **快速切换**：通过一键操作，您可以快速开启或关闭插件，无需复杂的设置过程。
+- **Quick Toggle**: With a single click, you can quickly enable or disable plugins without a complicated setup process.
 
-### 打开插件目录
+### Open Plugin Directory
 
-- **目录访问**：您可以轻松访问插件目录，以便进行更高级的管理和编辑操作。
+- **Directory Access**: You can easily access the plugin directory for more advanced management and editing operations.
 
-### 更好的界面
+### Improved Interface
 
-- **直观界面**：Better Plugins Manager 提供了一个直观的用户界面，让您能够轻松管理和配置插件。
-- **个性化设置**：您可以根据自己的喜好和工作流程对界面进行个性化设置，以提升用户体验。
+- **Intuitive Interface**: Better Plugins Manager provides an intuitive user interface, allowing you to easily manage and configure plugins.
+- **Personalization Settings**: You can personalize the interface according to your preferences and workflow to enhance the user experience.
+
+
