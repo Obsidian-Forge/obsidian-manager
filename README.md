@@ -1,29 +1,22 @@
-# Better Plugins Manager 插件介绍文档
+<div align="center">
+	<h1>Better Plugins Manager<h1>
+	<img src="https://img.shields.io/github/downloads/0011000000110010/obsidian-manager/total" alt="GitHub Downloads (all assets, all releases)" />
+	<img src="https://img.shields.io/github/v/release/0011000000110010/obsidian-manager" alt="GitHub release (latest by date)" />
+	<img src="https://img.shields.io/github/last-commit/0011000000110010/obsidian-manager" alt="GitHub last commit" />
+	<img src="https://img.shields.io/github/issues/0011000000110010/obsidian-manager" alt="GitHub issues" />
+	<img src="https://img.shields.io/github/stars/0011000000110010/obsidian-manager?style=social" alt="GitHub stars" />
+</div>
 
-## 概览
+[简体中文](https://github.com/0011000000110010/obsidian-manager/blob/main/README_CN.md) | English
 
-Better Plugins Manager 是一款旨在提升插件管理体验的工具，它让您的插件管理变得更加直观和高效。以下是该插件的详细介绍。
+In the ecosystem of Obsidian, plugins play a key role in expanding functionality and enhancing workflow efficiency. Although Obsidian provides basic plugin management capabilities, for users who pursue higher management efficiency and personalized experiences, these may not be sufficient. Better Plugins Manager (BPM) is born out of this need, aiming to surpass basic functionalities and offer a more refined and powerful plugin management solution.
 
-## 功能特点
+## Features
 
-### 延时启动插件
-
-- **自定义延时**：您可以为插件设置延时启动，以便在应用启动时不会立即加载所有插件，从而提高启动速度和性能。
-
-### 更改名称和描述
-
-- **插件重命名**：您可以更改插件的名称，以更好地反映其功能或您的个人偏好。
-- **描述编辑**：您可以编辑插件的描述，以提供更多关于插件功能的信息或根据您的使用情况进行个性化描述。
-
-### 一键开启和关闭
-
-- **快速切换**：通过一键操作，您可以快速开启或关闭插件，无需复杂的设置过程。
-
-### 打开插件目录
-
-- **目录访问**：您可以轻松访问插件目录，以便进行更高级的管理和编辑操作。
-
-### 更好的界面
-
-- **直观界面**：Better Plugins Manager 提供了一个直观的用户界面，让您能够轻松管理和配置插件。
-- **个性化设置**：您可以根据自己的喜好和工作流程对界面进行个性化设置，以提升用户体验。
+- **Plugin Delayed Startup**: BPM allows you to set personalized delay times for each plugin, reducing startup time and enhancing application performance.
+- **Intuitive and User-Friendly Interface**: BPM's clear and intuitive interface design simplifies the plugin management and configuration process, making your operations more intuitive and convenient.
+- **Customizable Interface**: BPM offers personalized settings, allowing you to customize the interface according to your preferences and workflow.
+- **Convenient Directory Access**: BPM lets you access the plugin directory with one click, making it easy to manage and edit at a deeper level, meeting your advanced management needs.
+- **Quick Plugin Toggle**: BPM simplifies the process of enabling and disabling plugins with one-click operations, allowing you to respond to changes quickly without going through complicated setup steps.
+- **Plugin Renaming**: BPM allows you to rename plugins based on their actual function or personal preference, making your plugin list more intuitive and personalized.
+- **Description Editing**: BPM allows you to edit plugin descriptions based on their actual use or personal experience, making your plugin list more aligned with your personal workflow.
