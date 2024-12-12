@@ -1,0 +1,283 @@
+:root {
+    --i18n-border-radius: 4px;
+    --el-font-size-base: 14px;
+    --i18n-button-font-weight: 500px;
+    --i18n-tag-font-size: 10px;
+    --i18n-tag-border-radius: 3px;
+    --i18n-tag-border-radius-rounded: 9999px;
+}
+
+body {
+    --item-inactive: 0.75;
+}
+
+body.theme-dark {
+    --item-inactive: 0.5;
+}
+
+/* [通用] Tag (标签)
+---------------------------------------------------------------- */
+.manager-tag {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 5px;
+    font-size: var(--i18n-tag-font-size);
+    line-height: 1;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: var(--i18n-tag-border-radius);
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.manager-tag:first-child {
+    margin-left: 0px;
+}
+
+
+/* 插件管理器 模块
+---------------------------------------------------------------- */
+.manager-container {
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    width: 800px;
+    min-width: 550px;
+    border-radius: var(--i18n-border-radius);
+    background-color: var(--background-primary);
+}
+
+.manager-container::-webkit-scrollbar {
+    display: none;
+}
+
+.manager-container__header {
+    margin-bottom: 0px;
+}
+
+.manager-bar__action {
+    margin: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: #fff solid 0px;
+}
+
+.manager-bar__action:first-child {
+    padding-top: 0px;
+}
+
+.manager-bar__search {
+    margin: 0;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    border: #fff solid 0px;
+}
+
+/* 目录容器 */
+.manager-item-container {
+    overflow: auto;
+}
+
+.manager-item-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* 目录项 */
+.manager-item {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 6px 10px;
+    border: #fff solid 0px;
+    border-radius: var(--i18n-border-radius);
+    background-color: var(--background-modifier-hover);
+    margin-bottom: 6px;
+}
+
+.manager-item:first-child {
+    padding-top: 6px;
+}
+
+.manager-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.manager-item.inactive {
+    filter: brightness(var(--item-inactive));
+}
+
+/* 目录项 名称行*/
+.manager-item__name-container {
+    display: flex;
+    align-items: center;
+    height: auto;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.manager-item__name-group {
+    display: flex;
+    margin-right: 5px;
+}
+
+.manager-item__name-title {
+    display: flex;
+    margin-right: 5px;
+}
+
+.manager-item__name-version {
+    display: flex;
+    font-size: 9px;
+}
+
+.manager-item__name-desc {
+    margin-bottom: 4px;
+}
+
+/* 目录项 描述行*/
+.manager-item__description-container {
+    margin-left: 0px;
+    transition: opacity 3s ease-out;
+}
+
+.manager-editor__container {
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    width: 350px;
+    border-radius: var(--i18n-border-radius);
+    background-color: var(--background-primary);
+}
+
+.manager-editor__container::-webkit-scrollbar {
+    display: none;
+}
+
+.manager-bar__title {
+    margin: 0;
+    padding-top: 0px;
+    padding-bottom: 6px;
+    border: #fff solid 0px;
+}
+
+.manager-editor__item {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 6px 0px;
+    border: #fff solid 0px;
+    border-radius: var(--i18n-border-radius);
+}
+
+.manager-editor__item:first-child {
+    padding-top: 6px;
+}
+
+.manager-editor__item:hover {
+    background-color: var(--i18n-background-modifier-hover);
+}
+
+
+/* 设置界面CSS */
+.manager-setting__container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.manager-setting__tabs {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    border-bottom: 1px solid var(--interactive-accent);
+}
+
+.manager-setting__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: 25px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.manager-setting__content::-webkit-scrollbar {
+    display: none;
+}
+
+.manager-setting__tabs-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+    height: 40px;
+    font-weight: bold;
+    font-size: 14px;
+    border-top: 1px solid var(--interactive-accent);
+    border-right: 1px solid var(--interactive-accent);
+}
+
+.manager-setting__tabs-item:first-child {
+    border-top-left-radius: 4px;
+    border-left: 1px solid var(--interactive-accent);
+}
+
+.manager-setting__tabs-item:last-child {
+    border-top-right-radius: 4px;
+}
+
+.manager-setting__tabs-item_is-active {
+    color: var(--interactive-accent);
+}
+
+/* 标签设置页面 */
+.manager-setting-tag__container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.manager-setting-tag__item {
+    padding: 3px 0px;
+    border-top: 0px solid #fff;
+}
+
+.manager-setting-tag__item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* 分组设置页面 */
+.manager-setting-group__container {
+    padding: 3px;
+    border-top: 0px solid #fff;
+    border-radius: var(--i18n-border-radius);
+}
+
+.manager-setting-group__item {
+    padding: 3px 0px;
+    border-top: 0px solid #fff;
+    border-radius: var(--i18n-border-radius);
+}
+
+.manager-setting-group__item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* 卸载 */
+
+.manager-delete__title {
+    margin: 0;
+    padding-top: 0px;
+    padding-bottom: 6px;
+    border: #fff solid 0px;
+}
+.manager-delete__action{
+    padding-bottom: 0px;
+}
