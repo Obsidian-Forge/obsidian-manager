@@ -15,6 +15,14 @@ body.theme-dark {
     --item-inactive: 0.5;
 }
 
+.manager-display-none {
+    display: none;
+}
+
+.manager-display-block{
+    display: block;
+}
+
 /* [通用] Tag (标签)
 ---------------------------------------------------------------- */
 .manager-tag {
@@ -133,6 +141,12 @@ body.theme-dark {
 .manager-item__name-version {
     display: flex;
     font-size: 9px;
+    margin-right: 5px;
+}
+
+.manager-item__name-delay{
+    font-weight: bold;
+    color: var(--interactive-accent);
 }
 
 .manager-item__name-desc {
@@ -271,13 +285,13 @@ body.theme-dark {
 }
 
 /* 卸载 */
-
 .manager-delete__title {
     margin: 0;
     padding-top: 0px;
     padding-bottom: 6px;
     border: #fff solid 0px;
 }
-.manager-delete__action{
+
+.manager-delete__action {
     padding-bottom: 0px;
 }
