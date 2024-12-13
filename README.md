@@ -20,3 +20,14 @@ In the ecosystem of Obsidian, plugins play a key role in expanding functionality
 - **Quick Plugin Toggle**: BPM simplifies the process of enabling and disabling plugins with one-click operations, allowing you to respond to changes quickly without going through complicated setup steps.
 - **Plugin Renaming**: BPM allows you to rename plugins based on their actual function or personal preference, making your plugin list more intuitive and personalized.
 - **Description Editing**: BPM allows you to edit plugin descriptions based on their actual use or personal experience, making your plugin list more aligned with your personal workflow.
+- **Group Management**: BPM introduces group management functionality, allowing you to logically group plugins for easier management 和 quick access, enhancing work efficiency.
+- **Tagging Management**: BPM enables you to add personalized tags to plugins, whether by function, frequency of use, or personal categorization, making your plugin management more organized.
+- **Advanced Search**: BPM offers an advanced search feature, allowing you to quickly locate the plugins you need, whether by name, group, or tag, making it easy to find them.
+
+## screenshot of the interface
+
+![image](https://github.com/0011000000110010/obsidian-manager/blob/main/img/1.png)
+
+![image](https://github.com/0011000000110010/obsidian-manager/blob/main/img/2.png)
+
+![image](https://github.com/0011000000110010/obsidian-manager/blob/main/img/3.png)
