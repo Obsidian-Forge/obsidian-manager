@@ -78,8 +78,6 @@ export default class Manager extends Plugin {
             setTimeout(async () => {
                 await this.appPlugins.enablePlugin(id);
             }, plugin.delay * 1000);
-
-
     }
 }
 

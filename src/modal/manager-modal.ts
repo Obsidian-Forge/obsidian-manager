@@ -72,7 +72,6 @@ export class ManagerModal extends Modal {
         // [操作行] 编辑模式
         const editorButton = new ButtonComponent(actionBar.controlEl)
         this.editorMode ? editorButton.setIcon('pen') : editorButton.setIcon('pen-off');
-        if (this.editorMode) editorButton.setCta();
         editorButton.setTooltip(t('管理器_编辑模式_描述'))
         editorButton.onClick(() => {
             this.editorMode = !this.editorMode;
@@ -104,12 +103,14 @@ export class ManagerModal extends Modal {
         disableButton.setTooltip(t('管理器_一键禁用_描述'))
         disableButton.onClick(async () => {
             for (const plugin of this.displayPlugins) {
-                await this.appPlugins.disablePlugin(plugin.id);
-                const ManagerPlugin = this.manager.settings.Plugins.find(mp => mp.id === plugin.id);
-                if (ManagerPlugin) ManagerPlugin.enabled = false;
-                this.manager.saveSettings();
+                const ManagerPlugin = this.settings.Plugins.find(p => p.id === plugin.id);
+                if (ManagerPlugin && ManagerPlugin.enabled) {
+                    await this.appPlugins.disablePlugin(plugin.id);
+                    ManagerPlugin.enabled = false;
+                    this.manager.saveSettings();
+                    this.reloadShowData();
+                }
             }
-            this.reloadShowData();
         });
 
         // [操作行] 一键启用
@@ -118,12 +119,14 @@ export class ManagerModal extends Modal {
         enableButton.setTooltip(t('管理器_一键启用_描述'))
         enableButton.onClick(async () => {
             for (const plugin of this.displayPlugins) {
-                await this.appPlugins.enablePlugin(plugin.id);
                 const ManagerPlugin = this.manager.settings.Plugins.find(mp => mp.id === plugin.id);
-                if (ManagerPlugin) ManagerPlugin.enabled = true;
-                this.manager.saveSettings();
+                if (ManagerPlugin && !ManagerPlugin.enabled) {
+                    await this.appPlugins.enablePlugin(plugin.id);
+                    ManagerPlugin.enabled = true;
+                    this.manager.saveSettings();
+                    this.reloadShowData();
+                }
             }
-            this.reloadShowData();
         });
 
         // [操作行] 插件设置
@@ -228,22 +231,24 @@ export class ManagerModal extends Modal {
                 if (!this.editorMode) {
                     switch (this.settings.ITEM_STYLE) {
                         case 'alwaysExpand':
-                            itemEl.descEl.style.display = 'block';
+                            itemEl.descEl.addClass('manager-display-block')
                             break;
                         case 'neverExpand':
-                            itemEl.descEl.style.display = 'none';
+                            itemEl.descEl.addClass('manager-display-none')
                             break;
                         case 'hoverExpand':
-                            itemEl.descEl.style.display = 'none';
-                            itemEl.settingEl.addEventListener('mouseenter', function () {
-                                itemEl.descEl.style.display = 'block';
+                            itemEl.descEl.addClass('manager-display-none')
+                            itemEl.settingEl.addEventListener('mouseenter', () => {
+                                itemEl.descEl.removeClass('manager-display-none')
+                                itemEl.descEl.addClass('manager-display-block')
                             });
-                            itemEl.settingEl.addEventListener('mouseleave', function () {
-                                itemEl.descEl.style.display = 'none';
+                            itemEl.settingEl.addEventListener('mouseleave', () => {
+                                itemEl.descEl.removeClass('manager-display-block')
+                                itemEl.descEl.addClass('manager-display-none')
                             });
                             break;
                         case 'clickExpand':
-                            itemEl.descEl.style.display = 'none';
+                            itemEl.descEl.addClass('manager-display-none')
                             itemEl.settingEl.addEventListener('click', function (event) {
                                 const excludedButtons = Array.from(itemEl.controlEl.querySelectorAll('div'));
                                 // @ts-ignore
@@ -251,10 +256,12 @@ export class ManagerModal extends Modal {
                                     event.stopPropagation();
                                     return;
                                 }
-                                if (itemEl.descEl.style.display === 'none') {
-                                    itemEl.descEl.style.display = 'block';
+                                if (itemEl.descEl.hasClass('manager-display-none')) {
+                                    itemEl.descEl.removeClass('manager-display-none')
+                                    itemEl.descEl.addClass('manager-display-block')
                                 } else {
-                                    itemEl.descEl.style.display = 'none';
+                                    itemEl.descEl.removeClass('manager-display-block')
+                                    itemEl.descEl.addClass('manager-display-none')
                                 }
                             });
                             break;
@@ -289,7 +296,6 @@ export class ManagerModal extends Modal {
                     title: plugin.name,
                     cls: 'manager-item__name-title'
                 })
-                itemEl.nameEl.appendChild(title);
                 // [编辑] 名称
                 if (this.editorMode) {
                     title.setAttribute('style', 'border-width: 1px;border-style: dashed;')
@@ -301,6 +307,7 @@ export class ManagerModal extends Modal {
                         }
                     });
                 }
+                itemEl.nameEl.appendChild(title);
 
                 // [默认] 版本
                 const version = createSpan({
@@ -337,7 +344,6 @@ export class ManagerModal extends Modal {
                     title: plugin.description,
                     cls: ['manager-item__name-desc']
                 })
-                itemEl.descEl.appendChild(desc);
                 // [编辑] 描述
                 if (this.editorMode) {
                     desc.setAttribute('style', 'border-width: 1px;border-style: dashed')
@@ -349,6 +355,7 @@ export class ManagerModal extends Modal {
                         }
                     });
                 }
+                itemEl.descEl.appendChild(desc);
 
                 // [默认] 标签组
                 const tags = createDiv();
@@ -449,7 +456,7 @@ export class ManagerModal extends Modal {
         const modalElement: HTMLElement = this.contentEl;
         scrollTop = modalElement.scrollTop;
         modalElement.empty();
-        await this.showData();
+        this.showData();
         modalElement.scrollTo(0, scrollTop);
     }
 
