@@ -1,3 +1,3 @@
-import I18n from './src/main'
+import Manager from './src/main'
 
-export default I18n
+export default Manager

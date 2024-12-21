@@ -11,7 +11,6 @@ import { ManagerPlugin } from './data/types';
 export default class Manager extends Plugin {
     settings: ManagerSettings;
     managerModal: ManagerModal;
-
     appPlugins: any;
 
     async onload() {
@@ -32,7 +31,7 @@ export default class Manager extends Plugin {
         plugins.forEach((plugin: PluginManifest) => this.initPlugin(plugin));
         plugins.forEach((plugin: PluginManifest) => this.startPlugin(plugin.id));
     }
-
+    
     async onunload() {
         const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id);
         plugins.forEach(async (pm: PluginManifest) => {
@@ -79,5 +78,6 @@ export default class Manager extends Plugin {
                 await this.appPlugins.enablePlugin(id);
             }, plugin.delay * 1000);
     }
+
 }
 

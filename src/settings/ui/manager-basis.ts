@@ -5,7 +5,6 @@ import { t } from "src/lang/inxdex";
 
 export default class ManagerBasis extends BaseSetting {
     main(): void {
-        new Setting(this.containerEl).setName(t('设置_基础设置_样式_标题')).setHeading();
 
         const itemStyleBar = new Setting(this.containerEl).setName(t('设置_基础设置_目录样式_标题')).setDesc(t('设置_基础设置_目录样式_描述'));
         const itemStyleDropdown = new DropdownComponent(itemStyleBar.controlEl);
@@ -33,8 +32,6 @@ export default class ManagerBasis extends BaseSetting {
             this.settings.TAG_STYLE = value;
             this.manager.saveSettings();
         });
-
-        new Setting(this.containerEl).setName(t('设置_基础设置_功能_标题')).setHeading();
 
         const fadeOutDisabledPluginsBar = new Setting(this.containerEl).setName(t('设置_基础设置_淡化插件_标题')).setDesc(t('设置_基础设置_淡化插件_描述'));
         const fadeOutDisabledPluginsToggle = new ToggleComponent(fadeOutDisabledPluginsBar.controlEl);

@@ -1,4 +1,4 @@
-import { Notice } from 'obsidian';
+import { Notice, Platform } from 'obsidian';
 import { exec } from 'child_process';
 import { t } from './lang/inxdex';
 
@@ -10,14 +10,15 @@ import { t } from './lang/inxdex';
  * 如果操作成功，显示成功通知；如果失败，显示错误通知。
  */
 export const managerOpen = (dir: string) => {
-	if (navigator.userAgent.match(/Win/i)) {
+	if (Platform.isDesktop) {
 		exec(`start "" "${dir}"`, (error) => {
 			if (error) { new Notice(t('通用_失败_文本')); } else { new Notice(t('通用_成功_文本')); }
 		});
 	}
-	if (navigator.userAgent.match(/Mac/i)) {
+	if (Platform.isMacOS) {
 		exec(`open ${dir}`, (error) => {
 			if (error) { new Notice(t('通用_失败_文本')); } else { new Notice(t('通用_成功_文本')); }
 		});
 	}
 }
+
