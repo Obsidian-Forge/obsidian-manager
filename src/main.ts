@@ -31,7 +31,7 @@ export default class Manager extends Plugin {
         plugins.forEach((plugin: PluginManifest) => this.initPlugin(plugin));
         plugins.forEach((plugin: PluginManifest) => this.startPlugin(plugin.id));
     }
-    
+
     async onunload() {
         const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id);
         plugins.forEach(async (pm: PluginManifest) => {
@@ -64,7 +64,7 @@ export default class Manager extends Plugin {
                 'group': '',
                 'tags': [],
                 'enabled': isEnabled,
-                'delay': 0,
+                'delay': '',
             }
             this.settings.Plugins.push(mp);
             this.saveSettings();
@@ -73,10 +73,13 @@ export default class Manager extends Plugin {
 
     private async startPlugin(id: string) {
         const plugin = this.settings.Plugins.find(p => p.id === id);
-        if (plugin && plugin.enabled)
+        if (plugin && plugin.enabled) {
+            const delay = this.settings.DELAYS.find(item => item.id === plugin.delay);
+            const time = delay ? delay.time : 0;
             setTimeout(async () => {
                 await this.appPlugins.enablePlugin(id);
-            }, plugin.delay * 1000);
+            }, time * 1000);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 import { App, ExtraButtonComponent, Modal, Setting } from 'obsidian';
 import { ManagerSettings } from '../settings/data';
+import { t } from 'src/lang/inxdex';
 
 export class DeleteModal extends Modal {
     settings: ManagerSettings;
@@ -20,9 +21,9 @@ export class DeleteModal extends Modal {
         this.contentEl.addClass('manager-item-container');
 
         // [标题行]
-        const titleBar = new Setting(this.titleEl)
+        const titleBar = new Setting(this.titleEl) 
         titleBar.setClass('manager-delete__title')
-        titleBar.setName('卸载插件');
+        titleBar.setName(t('卸载_标题'));
 
         // [标题行] 关闭按钮
         const closeButton = new ExtraButtonComponent(titleBar.controlEl)
@@ -32,19 +33,19 @@ export class DeleteModal extends Modal {
 
     private async showData() {
         const titleBar = new Setting(this.titleEl)
-        titleBar.setName('你确定要卸载此插件吗？这将删除插件的文件夹。');
+        titleBar.setName(t('卸载_提示'));
         const actionBar = new Setting(this.titleEl)
         actionBar.setClass('manager-delete__action')
         actionBar.addButton(cb => cb
             .setWarning()
-            .setButtonText('卸载')
+            .setButtonText(t('卸载_卸载'))
             .onClick(() => {
                 this.deleteCallback();
                 this.close();
             })
         );
         actionBar.addButton(cb => cb
-            .setButtonText('取消')
+            .setButtonText(t('卸载_取消'))
             .onClick(() => {
                 this.close();
             })

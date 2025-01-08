@@ -1,9 +1,9 @@
 {
     "id": "better-plugins-manager",
     "name": "Better Plugins Manager",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "minAppVersion": "1.5.8",
-    "description": "打造您的极致插件管理体验，让插件管理变得更加直观、高效，同时提升您的工作流程和个性化设置。",
+    "description": "Craft your ultimate plugin management experience, making plugin management more intuitive and efficient, while enhancing your workflow and personalized settings. 打造您的极致插件管理体验，让插件管理变得更加直观、高效，同时提升您的工作流程和个性化设置。",
     "author": "zero",
     "authorUrl": "https://github.com/0011000000110010/",
     "isDesktopOnly": true

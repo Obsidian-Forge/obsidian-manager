@@ -5,6 +5,7 @@ import ManagerBasis from './ui/manager-basis';
 import ManagerGroup from './ui/manager-group';
 import ManagerTag from './ui/manager-tag';
 import { t } from 'src/lang/inxdex';
+import ManagerDelay from './ui/manager-delay';
 
 class ManagerSettingTab extends PluginSettingTab {
 	i18n: I18N;
@@ -30,6 +31,7 @@ class ManagerSettingTab extends PluginSettingTab {
 			{ text: t('设置_基础设置_前缀'), content: () => this.basisDisplay() },
 			{ text: t('设置_分组设置_前缀'), content: () => this.groupDisplay() },
 			{ text: t('设置_标签设置_前缀'), content: () => this.tagDisplay() },
+			{ text: t('设置_延迟设置_前缀'), content: () => this.delayDisplay() },
 		];
 		const tabItemsEls: HTMLDivElement[] = [];
 
@@ -49,6 +51,7 @@ class ManagerSettingTab extends PluginSettingTab {
 	basisDisplay() { this.contentEl.empty(); new ManagerBasis(this).display(); }
 	groupDisplay() { this.contentEl.empty(); new ManagerGroup(this).display(); }
 	tagDisplay() { this.contentEl.empty(); new ManagerTag(this).display(); }
+	delayDisplay() { this.contentEl.empty(); new ManagerDelay(this).display(); }
 }
 
 export { ManagerSettingTab };

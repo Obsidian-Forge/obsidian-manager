@@ -1,4 +1,4 @@
-import {  ManagerPlugin, Tag, Type } from '../data/types';
+import {  Delay, ManagerPlugin, Tag, Type } from '../data/types';
 
 export interface ManagerSettings {
 	ITEM_STYLE: string;
@@ -7,6 +7,7 @@ export interface ManagerSettings {
 	FADE_OUT_DISABLED_PLUGINS: boolean,
 	GROUPS: Type[];
 	TAGS: Tag[];
+	DELAYS: Delay[];
 	Plugins: ManagerPlugin[];
 }
 
@@ -27,6 +28,13 @@ export const DEFAULT_SETTINGS: ManagerSettings = {
 			"id": "default",
 			"name": "默认标签",
 			"color": "#A079FF"
+		},
+	],
+	DELAYS: [
+		{
+			"id": "default",
+			"name": "默认延迟",
+			"time": 10
 		},
 	],
 	Plugins: [],

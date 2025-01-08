@@ -45,7 +45,7 @@ export class GroupModal extends Modal {
                 .addToggle(cb => cb
                     .setValue(group === this.managerPlugin.group)
                     .onChange(() => {
-                        this.managerPlugin.group = group;
+                        this.managerPlugin.group = this.managerPlugin.group == group ? '' : group;
                         this.manager.saveSettings();
                         this.managerModal.reloadShowData();
                         this.reloadShowData();

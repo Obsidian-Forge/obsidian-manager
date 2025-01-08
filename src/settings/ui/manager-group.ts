@@ -24,7 +24,7 @@ export default class ManagerGroup extends BaseSetting {
                 })
             )
             .addText(cb => cb
-                .setPlaceholder('名称')
+                .setPlaceholder(t('通用_名称_文本'))
                 .onChange((value) => {
                     name = value;
                 })
@@ -38,16 +38,16 @@ export default class ManagerGroup extends BaseSetting {
                         this.manager.settings.GROUPS.push({ id, name, color });
                         this.manager.saveSettings();
                         this.settingTab.groupDisplay();
-                        new Notice('[分组] 分组已添加');
+                        new Notice(t('设置_分组设置_通知_一'));
                     } else {
-                        new Notice('[分组] ID已存在或为空');
+                        new Notice(t('设置_分组设置_通知_二'));
                     }
                 })
             )
         this.manager.settings.GROUPS.forEach((tag, index) => {
             const item = new Setting(this.containerEl)
             item.settingEl.addClass('manager-setting-group__item')
-            item.setName(`第${index + 1}项: ${tag.id}`)
+            item.setName(`${index + 1}. ${tag.id}`)
             item.addColorPicker(cb => cb
                 .setValue(tag.color)
                 .onChange((value) => {
@@ -70,9 +70,9 @@ export default class ManagerGroup extends BaseSetting {
                         this.manager.settings.GROUPS = this.manager.settings.GROUPS.filter(t => t.id !== tag.id);
                         this.manager.saveSettings();
                         this.settingTab.groupDisplay();
-                        new Notice('[分组] 分组删除成功');
+                        new Notice(t('设置_分组设置_通知_三'));
                     } else {
-                        new Notice('[分组] 无法删除此分组，此分组下存在插件');
+                        new Notice(t('设置_分组设置_通知_四'));
                     }
                 })
             )

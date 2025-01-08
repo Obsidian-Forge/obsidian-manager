@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, SliderComponent, ToggleComponent } from 'obsidian';
+import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, ToggleComponent } from 'obsidian';
 
 import { ManagerSettings } from '../settings/data';
 import { managerOpen } from '../utils';
@@ -313,29 +313,31 @@ export class ManagerModal extends Modal {
                 const version = createSpan({
                     text: `[${plugin.version}]`,
                     cls: ['manager-item__name-version'],
-                    title: plugin.author
                 })
                 itemEl.nameEl.appendChild(version);
 
-                // [默认] 延迟
-                if (!this.editorMode && ManagerPlugin.delay !== 0) {
-                    const delay = createSpan({
-                        text: `${ManagerPlugin.delay}s`,
-                        cls: ['manager-item__name-delay'],
-                        title: plugin.author
-                    })
-                    itemEl.nameEl.appendChild(delay);
+                if (!this.editorMode && ManagerPlugin.delay !== '') {
+                    const d = this.settings.DELAYS.find(item => item.id === ManagerPlugin.delay);
+                    if (d) {
+                        const delay = createSpan({
+                            text: `${d.time}s`,
+                            cls: ['manager-item__name-delay'],
+                        }) 
+                        itemEl.nameEl.appendChild(delay);
+                    }
                 }
+
                 // [编辑] 延迟
                 if (this.editorMode) {
-                    const delay = new SliderComponent(itemEl.nameEl);
-                    delay.setLimits(0, 50, 1)
-                    delay.setValue(ManagerPlugin.delay)
-                    delay.setDynamicTooltip()
-                    delay.onChange((value) => {
+                    // @ts-ignore
+                    const delays = this.settings.DELAYS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无延迟' });
+                    const delaysEl = new DropdownComponent(itemEl.controlEl);
+                    delaysEl.addOptions(delays);
+                    delaysEl.setValue(ManagerPlugin.delay);
+                    delaysEl.onChange((value) => {
                         ManagerPlugin.delay = value;
                         this.manager.saveSettings();
-                    })
+                    });
                 }
 
                 // [默认] 描述 
@@ -344,6 +346,7 @@ export class ManagerModal extends Modal {
                     title: plugin.description,
                     cls: ['manager-item__name-desc']
                 })
+
                 // [编辑] 描述
                 if (this.editorMode) {
                     desc.setAttribute('style', 'border-width: 1px;border-style: dashed')
@@ -376,7 +379,7 @@ export class ManagerModal extends Modal {
                 }
 
                 // [按钮] 打开设置
-                if (ManagerPlugin.enabled) {
+                if (!this.editorMode && ManagerPlugin.enabled) {
                     const openPluginSetting = new ExtraButtonComponent(itemEl.controlEl)
                     openPluginSetting.setIcon('settings')
                     openPluginSetting.setTooltip(t('管理器_打开设置_描述'))
@@ -389,7 +392,7 @@ export class ManagerModal extends Modal {
                 }
 
                 // [按钮] 还原内容
-                if (this.editorMode) {
+                if (!this.editorMode && this.editorMode) {
                     const reloadButton = new ExtraButtonComponent(itemEl.controlEl)
                     reloadButton.setIcon('refresh-ccw')
                     reloadButton.setTooltip(t('管理器_还原内容_描述'))
@@ -404,49 +407,56 @@ export class ManagerModal extends Modal {
                 }
 
                 // [按钮] 打开目录
-                const openPluginDirButton = new ExtraButtonComponent(itemEl.controlEl)
-                openPluginDirButton.setIcon('folder-open')
-                openPluginDirButton.setTooltip(t('管理器_打开目录_描述'))
-                openPluginDirButton.onClick(() => {
-                    openPluginDirButton.setDisabled(true);
-                    managerOpen(pluginDir);
-                    openPluginDirButton.setDisabled(false);
-                });
+                if (!this.editorMode) {
+                    const openPluginDirButton = new ExtraButtonComponent(itemEl.controlEl)
+                    openPluginDirButton.setIcon('folder-open')
+                    openPluginDirButton.setTooltip(t('管理器_打开目录_描述'))
+                    openPluginDirButton.onClick(() => {
+                        openPluginDirButton.setDisabled(true);
+                        managerOpen(pluginDir);
+                        openPluginDirButton.setDisabled(false);
+                    });
+                }
 
                 // [按钮] 删除插件
-                const deletePluginButton = new ExtraButtonComponent(itemEl.controlEl)
-                deletePluginButton.setIcon('trash')
-                deletePluginButton.setTooltip(t('管理器_删除插件_描述'))
-                deletePluginButton.onClick(async () => {
-                    new DeleteModal(this.app, async () => {
-                        await this.appPlugins.uninstallPlugin(plugin.id);
-                        await this.appPlugins.loadManifests();
-                        this.reloadShowData();
-                        new Notice('卸载成功');
-                    }).open();
+                if (!this.editorMode) {
+                    const deletePluginButton = new ExtraButtonComponent(itemEl.controlEl)
+                    deletePluginButton.setIcon('trash')
+                    deletePluginButton.setTooltip(t('管理器_删除插件_描述'))
+                    deletePluginButton.onClick(async () => {
+                        new DeleteModal(this.app, async () => {
+                            await this.appPlugins.uninstallPlugin(plugin.id);
+                            await this.appPlugins.loadManifests();
+                            this.reloadShowData();
+                            new Notice('卸载成功');
+                        }).open();
 
-                });
+                    });
+                }
 
                 // [按钮] 切换状态
-                const toggleSwitch = new ToggleComponent(itemEl.controlEl)
-                toggleSwitch.setTooltip(t('管理器_切换状态_描述'))
-                toggleSwitch.setValue(ManagerPlugin.enabled)
-                toggleSwitch.onChange(async () => {
-                    if (toggleSwitch.getValue()) {
-                        // await this.appPlugins.enablePluginAndSave(plugin.id);
-                        if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.removeClass('inactive');  // [淡化插件]
-                        ManagerPlugin.enabled = true;
-                        this.manager.saveSettings();
-                        await this.appPlugins.enablePlugin(plugin.id);
-                    } else {
-                        // await this.appPlugins.disablePluginAndSave(plugin.id);
-                        if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass('inactive');  // [淡化插件]
-                        ManagerPlugin.enabled = false;
-                        this.manager.saveSettings();
-                        await this.appPlugins.disablePlugin(plugin.id);
-                    }
-                    this.reloadShowData();
-                })
+                if (!this.editorMode) {
+                    const toggleSwitch = new ToggleComponent(itemEl.controlEl)
+                    toggleSwitch.setTooltip(t('管理器_切换状态_描述'))
+                    toggleSwitch.setValue(ManagerPlugin.enabled)
+                    toggleSwitch.onChange(async () => {
+                        if (toggleSwitch.getValue()) {
+                            // await this.appPlugins.enablePluginAndSave(plugin.id);
+                            if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.removeClass('inactive');  // [淡化插件]
+                            ManagerPlugin.enabled = true;
+                            this.manager.saveSettings();
+                            await this.appPlugins.enablePlugin(plugin.id);
+                        } else {
+                            // await this.appPlugins.disablePluginAndSave(plugin.id);
+                            if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass('inactive');  // [淡化插件]
+                            ManagerPlugin.enabled = false;
+                            this.manager.saveSettings();
+                            await this.appPlugins.disablePlugin(plugin.id);
+                        }
+                        this.reloadShowData();
+                    })
+                }
+
             }
         }
     }

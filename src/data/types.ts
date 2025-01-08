@@ -5,7 +5,7 @@ export interface ManagerPlugin {
 	group: string;
 	tags: string[];
 	enabled: boolean;
-	delay: number;
+	delay: string;
 }
 
 export interface Type {
@@ -20,3 +20,8 @@ export interface Tag {
 	color: string;
 }
 
+export interface Delay {
+	id: string;
+	name: string;
+	time: number;
+}

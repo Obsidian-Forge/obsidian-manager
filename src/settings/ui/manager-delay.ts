@@ -2,25 +2,26 @@ import { t } from "src/lang/inxdex";
 import BaseSetting from "../base-setting";
 import { Notice, Setting } from "obsidian";
 
-export default class ManagerTag extends BaseSetting {
+export default class ManagerDelay extends BaseSetting {
     main(): void {
         let id = '';
         let name = '';
-        let color = '';
+        let time = 0;
         new Setting(this.containerEl)
             .setHeading()
             .setName(t('通用_新增_文本'))
-            .addColorPicker(cb => cb
-                .setValue(color)
+            .addSlider(cb => cb
+                .setLimits(0, 100, 1)
+                .setValue(time)
+                .setDynamicTooltip()
                 .onChange((value) => {
-                    color = value;
+                    time = value;
                 })
             )
             .addText(cb => cb
                 .setPlaceholder('ID')
                 .onChange((value) => {
                     id = value;
-                    this.manager.saveSettings();
                 })
             )
             .addText(cb => cb
@@ -32,47 +33,48 @@ export default class ManagerTag extends BaseSetting {
             .addExtraButton(cb => cb
                 .setIcon('plus')
                 .onClick(() => {
-                    const containsId = this.manager.settings.TAGS.some(tag => tag.id === id);
+                    const containsId = this.manager.settings.DELAYS.some(delay => delay.id === id);
                     if (!containsId && id !== '') {
-                        if (color === '') color = '#000000';
-                        this.manager.settings.TAGS.push({ id, name, color });
+                        this.manager.settings.DELAYS.push({ id, name, time });
                         this.manager.saveSettings();
-                        this.settingTab.tagDisplay();
-                        new Notice(t('设置_标签设置_通知_一'));
+                        this.settingTab.delayDisplay();
+                        new Notice(t('设置_延迟设置_通知_一'));
                     } else {
-                        new Notice(t('设置_标签设置_通知_二'));
+                        new Notice(t('设置_延迟设置_通知_二'));
                     }
                 })
             )
-        this.manager.settings.TAGS.forEach((tag, index) => {
+        this.manager.settings.DELAYS.forEach((delay, index) => {
             const item = new Setting(this.containerEl)
-            item.setClass('manager-setting-tag__item')
-            item.setName(`${index + 1}. ${tag.id}`)
-            item.addColorPicker(cb => cb
-                .setValue(tag.color)
+            item.settingEl.addClass('manager-setting-group__item')
+            item.setName(`${index + 1}. ${delay.id}`)
+            item.addSlider(cb => cb
+                .setLimits(0, 100, 1)
+                .setValue(delay.time)
+                .setDynamicTooltip()
                 .onChange((value) => {
-                    tag.color = value;
+                    delay.time = value
                     this.manager.saveSettings();
                 })
             )
             item.addText(cb => cb
-                .setValue(tag.name)
+                .setValue(delay.name)
                 .onChange((value) => {
-                    tag.name = value;
+                    delay.name = value;
                     this.manager.saveSettings();
                 })
             )
             item.addExtraButton(cb => cb
                 .setIcon('trash-2')
                 .onClick(() => {
-                    const hasTestTag = this.settings.Plugins.some(plugin => plugin.tags && plugin.tags.includes(tag.id));
-                    if (!hasTestTag) {
-                        this.manager.settings.TAGS = this.manager.settings.TAGS.filter(t => t.id !== tag.id);
+                    const hasTestGroup = this.settings.Plugins.some(plugin => plugin.delay === delay.id);
+                    if (!hasTestGroup) {
+                        this.manager.settings.DELAYS = this.manager.settings.DELAYS.filter(t => t.id !== delay.id);
                         this.manager.saveSettings();
-                        this.settingTab.tagDisplay();
-                        new Notice(t('设置_标签设置_通知_三'));
+                        this.settingTab.delayDisplay();
+                        new Notice(t('设置_延迟设置_通知_三'));
                     } else {
-                        new Notice(t('设置_标签设置_通知_四'));
+                        new Notice(t('设置_延迟设置_通知_四'));
                     }
                 })
             )
