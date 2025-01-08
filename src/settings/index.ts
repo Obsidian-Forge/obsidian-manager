@@ -31,7 +31,8 @@ class ManagerSettingTab extends PluginSettingTab {
 			{ text: t('设置_基础设置_前缀'), content: () => this.basisDisplay() },
 			{ text: t('设置_分组设置_前缀'), content: () => this.groupDisplay() },
 			{ text: t('设置_标签设置_前缀'), content: () => this.tagDisplay() },
-			{ text: t('设置_延迟设置_前缀'), content: () => this.delayDisplay() },
+			{ text: t('设置_延迟设置_前缀'), content: () => this.delayDisplay() }, 
+			
 		];
 		const tabItemsEls: HTMLDivElement[] = [];
 
