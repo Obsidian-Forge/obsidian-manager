@@ -7,6 +7,11 @@
 	<img src="https://img.shields.io/github/stars/0011000000110010/obsidian-manager?style=social" alt="GitHub stars" />
 </div>
 
+<div align="center">
+  <img src="https://github.com/0011000000110010/obsidian-manager/blob/main/img/index.png" alt="Obsidian Iconize">
+</div>
+
+
 [简体中文](https://github.com/0011000000110010/obsidian-manager/blob/main/README_CN.md) | English
 
 In the ecosystem of Obsidian, plugins play a key role in expanding functionality and enhancing workflow efficiency. Although Obsidian provides basic plugin management capabilities, for users who pursue higher management efficiency and personalized experiences, these may not be sufficient. Better Plugins Manager (BPM) is born out of this need, aiming to surpass basic functionalities and offer a more refined and powerful plugin management solution.
