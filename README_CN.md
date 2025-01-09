@@ -7,6 +7,11 @@
 	<img src="https://img.shields.io/github/stars/0011000000110010/obsidian-manager?style=social" alt="GitHub stars" />
 </div>
 
+<div align="center">
+  <img src="https://github.com/0011000000110010/obsidian-manager/blob/main/img/index.png" alt="Obsidian Iconize">
+</div>
+
+
 简体中文 | [English](https://github.com/0011000000110010/obsidian-manager/blob/main/README.md)
 
 在Obsidian的生态中，插件扮演着扩展功能和提升工作流效率的关键角色。尽管Obsidian提供了基本的插件管理功能，但对于追求更高管理效率和个性化体验的用户来说，这些可能还远远不够。Better Plugins Manager（BPM）因此而生，旨在超越基础功能，提供更精致、更强大的插件管理解决方案。
