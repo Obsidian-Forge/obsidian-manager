@@ -43,7 +43,7 @@ export default class ManagerDelay extends BaseSetting {
                         new Notice(t('设置_延迟设置_通知_二'));
                     }
                 })
-            )
+            ) 
         this.manager.settings.DELAYS.forEach((delay, index) => {
             const item = new Setting(this.containerEl)
             item.settingEl.addClass('manager-setting-group__item')

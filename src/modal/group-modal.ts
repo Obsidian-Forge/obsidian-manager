@@ -36,21 +36,23 @@ export class GroupModal extends Modal {
     }
 
     private async showData() {
-        // @ts-ignore
-        const allGroups: Record<string, string> = this.settings.GROUPS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, {});
-        for (const group in allGroups) {
-            new Setting(this.contentEl)
+        for (const group of this.settings.GROUPS) {
+            const itemEl = new Setting(this.contentEl)
                 .setClass('manager-editor__item')
-                .setName(allGroups[group])
                 .addToggle(cb => cb
-                    .setValue(group === this.managerPlugin.group)
+                    .setValue(group.id === this.managerPlugin.group)
                     .onChange(() => {
-                        this.managerPlugin.group = this.managerPlugin.group == group ? '' : group;
+                        this.managerPlugin.group = this.managerPlugin.group === group.id ? '' : group.id;
                         this.manager.saveSettings();
                         this.managerModal.reloadShowData();
                         this.reloadShowData();
                     })
                 );
+
+            const groupEl = createSpan({ cls: 'manager-item__name-group' });
+            itemEl.nameEl.appendChild(groupEl);
+            const tag = this.managerModal.createTag(group.name, group.color, this.settings.GROUP_STYLE);
+            groupEl.appendChild(tag);
         }
     }
 

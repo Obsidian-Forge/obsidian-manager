@@ -5,7 +5,6 @@ import { t } from "src/lang/inxdex";
 
 export default class ManagerBasis extends BaseSetting {
     main(): void {
-
         const itemStyleBar = new Setting(this.containerEl).setName(t('设置_基础设置_目录样式_标题')).setDesc(t('设置_基础设置_目录样式_描述'));
         const itemStyleDropdown = new DropdownComponent(itemStyleBar.controlEl);
         itemStyleDropdown.addOptions(ITEM_STYLE);

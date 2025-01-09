@@ -29,6 +29,8 @@ export class ManagerModal extends Modal {
     group = '';
     // 标签内容
     tag = '';
+    // 标签内容
+    delay = '';
     // 搜索内容
     searchText = '';
     // 编辑模式
@@ -62,27 +64,24 @@ export class ManagerModal extends Modal {
         const actionBar = new Setting(this.titleEl).setClass('manager-bar__action').setName(t('通用_操作_文本'));
 
         // [操作行] Github
-        const githubButton = new ButtonComponent(actionBar.controlEl)
-        githubButton.setIcon('github')
-        githubButton.setTooltip(t('管理器_GITHUB_描述'))
+        const githubButton = new ButtonComponent(actionBar.controlEl);
+        githubButton.setIcon('github');
+        githubButton.setTooltip(t('管理器_GITHUB_描述'));
         githubButton.onClick(() => {
-            window.open(this.manager.manifest.authorUrl)
+            window.open(this.manager.manifest.authorUrl);
         });
-
-        // [操作行] 编辑模式
-        const editorButton = new ButtonComponent(actionBar.controlEl)
-        this.editorMode ? editorButton.setIcon('pen') : editorButton.setIcon('pen-off');
-        editorButton.setTooltip(t('管理器_编辑模式_描述'))
-        editorButton.onClick(() => {
-            this.editorMode = !this.editorMode;
-            this.editorMode ? editorButton.setIcon('pen') : editorButton.setIcon('pen-off');
-            this.reloadShowData();
+        // [操作行] Github
+        const tutorialButton = new ButtonComponent(actionBar.controlEl);
+        tutorialButton.setIcon('book-open');
+        tutorialButton.setTooltip('教程');
+        tutorialButton.onClick(() => {
+            window.open(this.manager.manifest.authorUrl);
         });
 
         // [操作行] 重载插件
-        const reloadButton = new ButtonComponent(actionBar.controlEl)
-        reloadButton.setIcon('refresh-ccw')
-        reloadButton.setTooltip(t('管理器_重载插件_描述'))
+        const reloadButton = new ButtonComponent(actionBar.controlEl);
+        reloadButton.setIcon('refresh-ccw');
+        reloadButton.setTooltip(t('管理器_重载插件_描述'));
         reloadButton.onClick(async () => {
             new Notice('重新加载第三方插件');
             await this.appPlugins.loadManifests();
@@ -90,17 +89,17 @@ export class ManagerModal extends Modal {
         });
 
         // [操作行] 检查更新
-        const updateButton = new ButtonComponent(actionBar.controlEl)
-        updateButton.setIcon('rss')
-        updateButton.setTooltip(t('管理器_检查更新_描述'))
+        const updateButton = new ButtonComponent(actionBar.controlEl);
+        updateButton.setIcon('rss');
+        updateButton.setTooltip(t('管理器_检查更新_描述'));
         updateButton.onClick(() => {
             console.log(this.appPlugins.checkForUpdates());
         });
 
         // [操作行] 一键禁用
-        const disableButton = new ButtonComponent(actionBar.controlEl)
-        disableButton.setIcon('square')
-        disableButton.setTooltip(t('管理器_一键禁用_描述'))
+        const disableButton = new ButtonComponent(actionBar.controlEl);
+        disableButton.setIcon('square');
+        disableButton.setTooltip(t('管理器_一键禁用_描述'));
         disableButton.onClick(async () => {
             for (const plugin of this.displayPlugins) {
                 const ManagerPlugin = this.settings.Plugins.find(p => p.id === plugin.id);
@@ -127,6 +126,16 @@ export class ManagerModal extends Modal {
                     this.reloadShowData();
                 }
             }
+        });
+
+        // [操作行] 编辑模式
+        const editorButton = new ButtonComponent(actionBar.controlEl)
+        this.editorMode ? editorButton.setIcon('pen-off') : editorButton.setIcon('pen');
+        editorButton.setTooltip(t('管理器_编辑模式_描述'))
+        editorButton.onClick(() => {
+            this.editorMode = !this.editorMode;
+            this.editorMode ? editorButton.setIcon('pen-off') : editorButton.setIcon('pen');
+            this.reloadShowData();
         });
 
         // [操作行] 插件设置
@@ -157,7 +166,7 @@ export class ManagerModal extends Modal {
         // [搜索行] 仅启用
         const onlyEnabled = new ButtonComponent(searchBar.controlEl)
         this.onlyEnabled ? onlyEnabled.setIcon('toggle-right') : onlyEnabled.setIcon('toggle-left');
-        onlyEnabled.setTooltip(t('管理器_仅启用_描述'))
+        onlyEnabled.setTooltip(t('管理器_仅启用_描述'));
         onlyEnabled.onClick(() => {
             this.onlyEnabled = !this.onlyEnabled;
             this.onlyEnabled ? onlyEnabled.setIcon('toggle-right') : onlyEnabled.setIcon('toggle-left');
@@ -167,9 +176,9 @@ export class ManagerModal extends Modal {
         // [搜索行] 分组选择列表
         // @ts-ignore
         const groups = this.settings.GROUPS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无分组' });
-        const groupsDropdown = new DropdownComponent(searchBar.controlEl)
-        groupsDropdown.addOptions(groups)
-        groupsDropdown.setValue(this.group !== '' ? this.group : '')
+        const groupsDropdown = new DropdownComponent(searchBar.controlEl);
+        groupsDropdown.addOptions(groups);
+        groupsDropdown.setValue(this.group !== '' ? this.group : '');
         groupsDropdown.onChange((value) => {
             this.group = value;
             this.reloadShowData();
@@ -178,16 +187,27 @@ export class ManagerModal extends Modal {
         // [搜索行] 标签选择列表
         // @ts-ignore
         const tags = this.settings.TAGS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无标签' });
-        const tagsDropdown = new DropdownComponent(searchBar.controlEl)
-        tagsDropdown.addOptions(tags)
-        tagsDropdown.setValue(this.tag)
+        const tagsDropdown = new DropdownComponent(searchBar.controlEl);
+        tagsDropdown.addOptions(tags);
+        tagsDropdown.setValue(this.tag);
         tagsDropdown.onChange((value) => {
             this.tag = value;
             this.reloadShowData();
         });
 
+        // [搜索行] 延迟选择列表
+        // @ts-ignore
+        const delays = this.settings.DELAYS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无延迟' });
+        const delaysDropdown = new DropdownComponent(searchBar.controlEl);
+        delaysDropdown.addOptions(delays);
+        delaysDropdown.setValue(this.delay);
+        delaysDropdown.onChange((value) => {
+            this.delay = value;
+            this.reloadShowData();
+        });
+
         // [搜索行] 搜索框
-        const search = new SearchComponent(searchBar.controlEl)
+        const search = new SearchComponent(searchBar.controlEl);
         search.onChange((value) => {
             this.searchText = value;
             this.reloadShowData();
@@ -203,7 +223,6 @@ export class ManagerModal extends Modal {
         for (const plugin of plugins) {
             const ManagerPlugin = this.manager.settings.Plugins.find(mp => mp.id === plugin.id);
             const pluginDir = path.join(this.basePath, plugin.dir ? plugin.dir : '');
-
             if (ManagerPlugin) {
                 // [搜索] 仅启用
                 if (this.onlyEnabled && !ManagerPlugin.enabled) continue;
@@ -211,8 +230,13 @@ export class ManagerModal extends Modal {
                 if (this.group !== '' && ManagerPlugin.group !== this.group) continue;
                 // [搜索] 标签
                 if (this.tag !== '' && !(ManagerPlugin.tags.includes(this.tag))) continue;
+                // [搜索] 标签
+                if (this.delay !== '' && ManagerPlugin.delay !== this.delay) continue;
                 // [搜索] 标题
-                if (this.searchText !== '' && ManagerPlugin.name.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1) continue;
+                if (this.searchText !== '' &&
+                    ManagerPlugin.name.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1 &&
+                    ManagerPlugin.desc.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1
+                ) continue;
                 // [禁用] 自己
                 if (plugin.id === this.manager.manifest.id) continue;
 
@@ -316,28 +340,16 @@ export class ManagerModal extends Modal {
                 })
                 itemEl.nameEl.appendChild(version);
 
+                // [默认] 延迟
                 if (!this.editorMode && ManagerPlugin.delay !== '') {
                     const d = this.settings.DELAYS.find(item => item.id === ManagerPlugin.delay);
                     if (d) {
                         const delay = createSpan({
                             text: `${d.time}s`,
                             cls: ['manager-item__name-delay'],
-                        }) 
+                        })
                         itemEl.nameEl.appendChild(delay);
                     }
-                }
-
-                // [编辑] 延迟
-                if (this.editorMode) {
-                    // @ts-ignore
-                    const delays = this.settings.DELAYS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无延迟' });
-                    const delaysEl = new DropdownComponent(itemEl.controlEl);
-                    delaysEl.addOptions(delays);
-                    delaysEl.setValue(ManagerPlugin.delay);
-                    delaysEl.onChange((value) => {
-                        ManagerPlugin.delay = value;
-                        this.manager.saveSettings();
-                    });
                 }
 
                 // [默认] 描述 
@@ -367,6 +379,7 @@ export class ManagerModal extends Modal {
                     const item = this.settings.TAGS.find(item => item.id === id);
                     if (item) {
                         const tag = this.createTag(item.name, item.color, this.settings.TAG_STYLE);
+                        if (this.editorMode) tag.onclick = () => { new TagsModal(this.app, this.manager, this, ManagerPlugin).open(); }
                         tags.appendChild(tag);
                     }
                 });
@@ -378,36 +391,21 @@ export class ManagerModal extends Modal {
                     tags.appendChild(tag);
                 }
 
-                // [按钮] 打开设置
-                if (!this.editorMode && ManagerPlugin.enabled) {
-                    const openPluginSetting = new ExtraButtonComponent(itemEl.controlEl)
-                    openPluginSetting.setIcon('settings')
-                    openPluginSetting.setTooltip(t('管理器_打开设置_描述'))
-                    openPluginSetting.onClick(() => {
-                        openPluginSetting.setDisabled(true);
-                        this.appSetting.open();
-                        this.appSetting.openTabById(plugin.id);
-                        openPluginSetting.setDisabled(false);
-                    });
-                }
-
-                // [按钮] 还原内容
-                if (!this.editorMode && this.editorMode) {
-                    const reloadButton = new ExtraButtonComponent(itemEl.controlEl)
-                    reloadButton.setIcon('refresh-ccw')
-                    reloadButton.setTooltip(t('管理器_还原内容_描述'))
-                    reloadButton.onClick(() => {
-                        ManagerPlugin.name = plugin.name;
-                        ManagerPlugin.desc = plugin.description;
-                        ManagerPlugin.group = '';
-                        ManagerPlugin.tags = [];
-                        this.manager.saveSettings();
-                        this.reloadShowData();
-                    });
-                }
-
-                // [按钮] 打开目录
                 if (!this.editorMode) {
+                    // [按钮] 打开设置
+                    if (ManagerPlugin.enabled) {
+                        const openPluginSetting = new ExtraButtonComponent(itemEl.controlEl)
+                        openPluginSetting.setIcon('settings')
+                        openPluginSetting.setTooltip(t('管理器_打开设置_描述'))
+                        openPluginSetting.onClick(() => {
+                            openPluginSetting.setDisabled(true);
+                            this.appSetting.open();
+                            this.appSetting.openTabById(plugin.id);
+                            openPluginSetting.setDisabled(false);
+                        });
+                    }
+
+                    // [按钮] 打开目录
                     const openPluginDirButton = new ExtraButtonComponent(itemEl.controlEl)
                     openPluginDirButton.setIcon('folder-open')
                     openPluginDirButton.setTooltip(t('管理器_打开目录_描述'))
@@ -416,10 +414,8 @@ export class ManagerModal extends Modal {
                         managerOpen(pluginDir);
                         openPluginDirButton.setDisabled(false);
                     });
-                }
 
-                // [按钮] 删除插件
-                if (!this.editorMode) {
+                    // [按钮] 删除插件
                     const deletePluginButton = new ExtraButtonComponent(itemEl.controlEl)
                     deletePluginButton.setIcon('trash')
                     deletePluginButton.setTooltip(t('管理器_删除插件_描述'))
@@ -432,10 +428,8 @@ export class ManagerModal extends Modal {
                         }).open();
 
                     });
-                }
 
-                // [按钮] 切换状态
-                if (!this.editorMode) {
+                    // [按钮] 切换状态
                     const toggleSwitch = new ToggleComponent(itemEl.controlEl)
                     toggleSwitch.setTooltip(t('管理器_切换状态_描述'))
                     toggleSwitch.setValue(ManagerPlugin.enabled)
@@ -457,6 +451,32 @@ export class ManagerModal extends Modal {
                     })
                 }
 
+                if (this.editorMode) {
+                    // [按钮] 还原内容
+                    const reloadButton = new ExtraButtonComponent(itemEl.controlEl)
+                    reloadButton.setIcon('refresh-ccw')
+                    reloadButton.setTooltip(t('管理器_还原内容_描述'))
+                    reloadButton.onClick(() => {
+                        ManagerPlugin.name = plugin.name;
+                        ManagerPlugin.desc = plugin.description;
+                        ManagerPlugin.group = '';
+                        ManagerPlugin.delay = '';
+                        ManagerPlugin.tags = [];
+                        this.manager.saveSettings();
+                        this.reloadShowData();
+                    });
+                    // [编辑] 延迟
+                    // @ts-ignore
+                    const delays = this.settings.DELAYS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, { '': '无延迟' });
+                    const delaysEl = new DropdownComponent(itemEl.controlEl);
+                    delaysEl.addOptions(delays);
+                    delaysEl.setValue(ManagerPlugin.delay);
+                    delaysEl.onChange((value) => {
+                        ManagerPlugin.delay = value;
+                        this.manager.saveSettings();
+                        this.reloadShowData();
+                    });
+                }
             }
         }
     }
@@ -479,7 +499,7 @@ export class ManagerModal extends Modal {
         this.contentEl.empty();
     }
 
-    private createTag(text: string, color: string, type: string) {
+    public createTag(text: string, color: string, type: string) {
         const style = this.generateTagStyle(color, type);
         const tag = createEl('span', {
             text: text,
@@ -508,7 +528,6 @@ export class ManagerModal extends Modal {
             default:
                 style = `background-color: transparent;border-style: dashed;`;
         }
-
         return style;
     }
 

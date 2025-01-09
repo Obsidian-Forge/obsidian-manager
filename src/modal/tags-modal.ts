@@ -34,26 +34,29 @@ export class TagsModal extends Modal {
     }
 
     private async showData() {
-        // @ts-ignore
-        const allTags: Record<string, string> = this.settings.TAGS.reduce((acc, item) => { acc[item.id] = item.name; return acc; }, {});
-        for (const tag in allTags) {
-            const item = new Setting(this.contentEl)
-            item.setClass('manager-editor__item')
-            item.setName(allTags[tag])
-            item.addToggle(cb => cb
-                .setValue(this.managerPlugin.tags.includes(tag))
-                .onChange((isChecked) => {
-                    if (isChecked) {
-                        // 添加开启的标签
-                        if (!this.managerPlugin.tags.includes(tag)) this.managerPlugin.tags.push(tag);
-                    } else {
-                        // 移除关闭的标签
-                        this.managerPlugin.tags = this.managerPlugin.tags.filter(t => t !== tag);
-                    }
-                    this.manager.saveSettings();
-                    this.managerModal.reloadShowData();
-                })
-            );
+        for (const tag of this.settings.TAGS) {
+            const itemEl = new Setting(this.contentEl)
+                .setClass('manager-editor__item')
+                .addToggle(cb => cb
+                    .setValue(this.managerPlugin.tags.includes(tag.id))
+                    .onChange((isChecked) => {
+                        if (isChecked) {
+                            // 添加开启的标签
+                            if (!this.managerPlugin.tags.includes(tag.id)) {
+                                this.managerPlugin.tags.push(tag.id);
+                            }
+                        } else {
+                            // 移除关闭的标签
+                            this.managerPlugin.tags = this.managerPlugin.tags.filter(t => t !== tag.id);
+                        }
+                        this.manager.saveSettings();
+                        this.managerModal.reloadShowData();
+                    })
+                );
+            const tempEl = createSpan({ cls: 'manager-item__name-group' });
+            itemEl.nameEl.appendChild(tempEl);
+            const tagEl = this.managerModal.createTag(tag.name, tag.color, this.settings.TAG_STYLE);
+            tempEl.appendChild(tagEl);
         }
     }
 
