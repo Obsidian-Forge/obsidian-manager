@@ -1,5 +1,6 @@
 import BaseSetting from "../base-setting";
 import { DropdownComponent, Setting, ToggleComponent } from "obsidian";
+import Commands from "src/command";
 import { GROUP_STYLE, ITEM_STYLE, TAG_STYLE } from "src/data/data";
 import { t } from "src/lang/inxdex";
 
@@ -39,6 +40,25 @@ export default class ManagerBasis extends BaseSetting {
             this.settings.FADE_OUT_DISABLED_PLUGINS = value;
             this.manager.saveSettings();
         });
+
+        const CommandItemBar = new Setting(this.containerEl).setName('启动单条命令').setDesc('测试版');
+        const CommandItemToggle = new ToggleComponent(CommandItemBar.controlEl);
+        CommandItemToggle.setValue(this.settings.COMMAND_ITEM);
+        CommandItemToggle.onChange((value) => {
+            this.settings.COMMAND_ITEM = value;
+            this.manager.saveSettings();
+            Commands(this.app, this.manager);
+        });
+        const CommandGroupBar = new Setting(this.containerEl).setName('启动群组命令').setDesc('测试版');
+        const CommandGroupToggle = new ToggleComponent(CommandGroupBar.controlEl);
+        CommandGroupToggle.setValue(this.settings.COMMAND_GROUP);
+        CommandGroupToggle.onChange((value) => {
+            this.settings.COMMAND_GROUP = value;
+            this.manager.saveSettings();
+            Commands(this.app, this.manager);
+        });
+
+
 
         new Setting(this.containerEl)
             .setName('新安装的插件未显示原因')

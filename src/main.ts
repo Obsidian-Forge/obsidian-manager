@@ -1,4 +1,4 @@
-import { Plugin, PluginManifest } from 'obsidian';
+import { Plugin, PluginManifest, WorkspaceLeaf } from 'obsidian';
 import { DEFAULT_SETTINGS, ManagerSettings } from './settings/data';
 import { ManagerSettingTab } from './settings';
 import { t } from './lang/inxdex';
@@ -12,10 +12,19 @@ export default class Manager extends Plugin {
     settings: ManagerSettings;
     managerModal: ManagerModal;
     appPlugins: any;
+    appWorkspace: any;
 
     async onload() {
         // @ts-ignore
         this.appPlugins = this.app.plugins;
+
+        this.appWorkspace = this.app.workspace;
+        
+        this.app.workspace.onLayoutReady(() => {
+            this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
+                if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); }
+            });
+        });
 
         console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
         await this.loadSettings();
@@ -32,6 +41,9 @@ export default class Manager extends Plugin {
         // 开始延时启动插件
         plugins.forEach((plugin: PluginManifest) => this.startPlugin(plugin.id));
         Commands(this.app, this);
+
+
+
     }
 
     async onunload() {
@@ -78,8 +90,8 @@ export default class Manager extends Plugin {
         if (plugin && plugin.enabled) {
             const delay = this.settings.DELAYS.find(item => item.id === plugin.delay);
             const time = delay ? delay.time : 0;
-            setTimeout(async () => {
-                await this.appPlugins.enablePlugin(id);
+            setTimeout(() => {
+                this.appPlugins.enablePlugin(id);
             }, time * 1000);
         }
     }

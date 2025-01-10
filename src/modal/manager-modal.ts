@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, ToggleComponent } from 'obsidian';
+import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, ToggleComponent, WorkspaceLeaf } from 'obsidian';
 
 import { ManagerSettings } from '../settings/data';
 import { managerOpen } from '../utils';
@@ -53,7 +53,9 @@ export class ManagerModal extends Modal {
         this.settings = manager.settings;
         // @ts-ignore
         this.basePath = path.normalize(this.app.vault.adapter.getBasePath());
+
     }
+
 
     public async showHead() {
         //@ts-ignore
@@ -85,7 +87,7 @@ export class ManagerModal extends Modal {
         const reloadButton = new ButtonComponent(actionBar.controlEl);
         reloadButton.setIcon('refresh-ccw');
         reloadButton.setTooltip(t('管理器_重载插件_描述'));
-        reloadButton.onClick(async () => {  
+        reloadButton.onClick(async () => {
             new Notice('重新加载第三方插件');
             await this.appPlugins.loadManifests();
             this.reloadShowData();
@@ -112,6 +114,8 @@ export class ManagerModal extends Modal {
                     this.manager.saveSettings();
                     this.reloadShowData();
                 }
+                Commands(this.app, this.manager);
+                setTimeout(() => { this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } }); }, 10);
             }
         });
 
@@ -129,6 +133,8 @@ export class ManagerModal extends Modal {
                     this.reloadShowData();
                 }
             }
+            Commands(this.app, this.manager);
+            this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } });
         });
 
         // [操作行] 编辑模式
@@ -445,12 +451,14 @@ export class ManagerModal extends Modal {
                             this.manager.saveSettings();
                             await this.appPlugins.enablePlugin(plugin.id);
                             Commands(this.app, this.manager);
+                            this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } });
                         } else {
                             if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass('inactive');  // [淡化插件]
                             ManagerPlugin.enabled = false;
                             this.manager.saveSettings();
                             await this.appPlugins.disablePlugin(plugin.id);
                             Commands(this.app, this.manager);
+                            setTimeout(() => { this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } }); }, 10);
                         }
                         this.reloadShowData();
                     })

@@ -4,7 +4,9 @@ export interface ManagerSettings {
 	ITEM_STYLE: string;
 	GROUP_STYLE: string;
 	TAG_STYLE: string;
-	FADE_OUT_DISABLED_PLUGINS: boolean,
+	FADE_OUT_DISABLED_PLUGINS: boolean;
+	COMMAND_ITEM: boolean;
+	COMMAND_GROUP: boolean;
 	GROUPS: Type[];
 	TAGS: Tag[];
 	DELAYS: Delay[];
@@ -16,6 +18,8 @@ export const DEFAULT_SETTINGS: ManagerSettings = {
 	GROUP_STYLE: "a",
 	TAG_STYLE: "b",
 	FADE_OUT_DISABLED_PLUGINS: true,
+	COMMAND_ITEM: false,
+	COMMAND_GROUP: false,
 	GROUPS: [
 		{
 			"id": "default",
