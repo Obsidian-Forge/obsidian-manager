@@ -9,6 +9,7 @@ import Manager from 'main';
 import { GroupModal } from './group-modal';
 import { TagsModal } from './tags-modal';
 import { DeleteModal } from './delete-modal';
+import Commands from 'src/command';
 
 // ==============================
 //          侧边栏 对话框 翻译
@@ -39,6 +40,8 @@ export class ManagerModal extends Modal {
     onlyEnabled = false;
     // 测试模式
     developerMode = false;
+
+    searchEl: any;
 
     constructor(app: App, manager: Manager) {
         super(app);
@@ -71,18 +74,18 @@ export class ManagerModal extends Modal {
             window.open(this.manager.manifest.authorUrl);
         });
         // [操作行] Github
-        const tutorialButton = new ButtonComponent(actionBar.controlEl);
-        tutorialButton.setIcon('book-open');
-        tutorialButton.setTooltip('教程');
-        tutorialButton.onClick(() => {
-            window.open(this.manager.manifest.authorUrl);
-        });
+        // const tutorialButton = new ButtonComponent(actionBar.controlEl);
+        // tutorialButton.setIcon('book-open');
+        // tutorialButton.setTooltip('教程');
+        // tutorialButton.onClick(() => {
+        //     window.open();
+        // });
 
         // [操作行] 重载插件
         const reloadButton = new ButtonComponent(actionBar.controlEl);
         reloadButton.setIcon('refresh-ccw');
         reloadButton.setTooltip(t('管理器_重载插件_描述'));
-        reloadButton.onClick(async () => {
+        reloadButton.onClick(async () => {  
             new Notice('重新加载第三方插件');
             await this.appPlugins.loadManifests();
             this.reloadShowData();
@@ -207,12 +210,11 @@ export class ManagerModal extends Modal {
         });
 
         // [搜索行] 搜索框
-        const search = new SearchComponent(searchBar.controlEl);
-        search.onChange((value) => {
+        this.searchEl = new SearchComponent(searchBar.controlEl);
+        this.searchEl.onChange((value: string) => {
             this.searchText = value;
             this.reloadShowData();
         })
-
     }
 
     public async showData() {
@@ -328,6 +330,7 @@ export class ManagerModal extends Modal {
                         if (title.textContent) {
                             ManagerPlugin.name = title.textContent;
                             this.manager.saveSettings();
+                            Commands(this.app, this.manager);
                         }
                     });
                 }
@@ -425,6 +428,8 @@ export class ManagerModal extends Modal {
                             await this.appPlugins.loadManifests();
                             this.reloadShowData();
                             new Notice('卸载成功');
+                            // 刷新命令行
+                            Commands(this.app, this.manager);
                         }).open();
 
                     });
@@ -435,17 +440,17 @@ export class ManagerModal extends Modal {
                     toggleSwitch.setValue(ManagerPlugin.enabled)
                     toggleSwitch.onChange(async () => {
                         if (toggleSwitch.getValue()) {
-                            // await this.appPlugins.enablePluginAndSave(plugin.id);
                             if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.removeClass('inactive');  // [淡化插件]
                             ManagerPlugin.enabled = true;
                             this.manager.saveSettings();
                             await this.appPlugins.enablePlugin(plugin.id);
+                            Commands(this.app, this.manager);
                         } else {
-                            // await this.appPlugins.disablePluginAndSave(plugin.id);
                             if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass('inactive');  // [淡化插件]
                             ManagerPlugin.enabled = false;
                             this.manager.saveSettings();
                             await this.appPlugins.disablePlugin(plugin.id);
+                            Commands(this.app, this.manager);
                         }
                         this.reloadShowData();
                     })
@@ -493,6 +498,15 @@ export class ManagerModal extends Modal {
     public async onOpen() {
         await this.showHead();
         await this.showData();
+        this.searchEl.inputEl.focus();
+        // [功能] ctrl+f聚焦
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+                if (this.searchEl.inputEl) {
+                    this.searchEl.inputEl.focus();
+                }
+            }
+        });
     }
 
     public async onClose() {

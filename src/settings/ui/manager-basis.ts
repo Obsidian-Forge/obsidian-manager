@@ -39,5 +39,14 @@ export default class ManagerBasis extends BaseSetting {
             this.settings.FADE_OUT_DISABLED_PLUGINS = value;
             this.manager.saveSettings();
         });
+
+        new Setting(this.containerEl)
+            .setName('新安装的插件未显示原因')
+            .setDesc('新插件安装后，需重启插件管理器才能显示。');
+
+        new Setting(this.containerEl)
+            .setName('首次启动需重重载所有插件原因')
+            .setDesc('为确保本插件优先启动，首次使用时需重启插件，之后由本插件接管启动流程。');
+
     }
 }

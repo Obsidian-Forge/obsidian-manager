@@ -1,4 +1,4 @@
-import {  Delay, ManagerPlugin, Tag, Type } from '../data/types';
+import { Delay, ManagerPlugin, Tag, Type } from '../data/types';
 
 export interface ManagerSettings {
 	ITEM_STYLE: string;

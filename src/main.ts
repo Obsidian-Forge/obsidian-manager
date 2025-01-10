@@ -18,7 +18,6 @@ export default class Manager extends Plugin {
         this.appPlugins = this.app.plugins;
 
         console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
-        Commands(this.app, this);
         await this.loadSettings();
 
         this.addRibbonIcon('folder-cog', t('通用_管理器_文本'), () => {
@@ -28,8 +27,11 @@ export default class Manager extends Plugin {
 
         this.addSettingTab(new ManagerSettingTab(this.app, this));
         const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id);
+        // 检测插件是否开启 如果开启则关闭
         plugins.forEach((plugin: PluginManifest) => this.initPlugin(plugin));
+        // 开始延时启动插件
         plugins.forEach((plugin: PluginManifest) => this.startPlugin(plugin.id));
+        Commands(this.app, this);
     }
 
     async onunload() {
@@ -53,7 +55,7 @@ export default class Manager extends Plugin {
         await this.saveData(this.settings);
     }
 
-    private async initPlugin(plugin: PluginManifest) {
+    public async initPlugin(plugin: PluginManifest) {
         const isEnabled = this.appPlugins.enabledPlugins.has(plugin.id);
         if (isEnabled) await this.appPlugins.disablePluginAndSave(plugin.id);
         if (!(this.settings.Plugins.some(p => p.id === plugin.id))) {
@@ -71,7 +73,7 @@ export default class Manager extends Plugin {
         }
     }
 
-    private async startPlugin(id: string) {
+    public async startPlugin(id: string) {
         const plugin = this.settings.Plugins.find(p => p.id === id);
         if (plugin && plugin.enabled) {
             const delay = this.settings.DELAYS.find(item => item.id === plugin.delay);
