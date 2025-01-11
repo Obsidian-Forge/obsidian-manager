@@ -1,4 +1,4 @@
-import { App, PluginManifest, WorkspaceLeaf } from "obsidian";
+import { App, PluginManifest } from "obsidian";
 import Manager from "./main";
 import { ManagerModal } from "./modal/manager-modal";
 import { t } from "./lang/inxdex";
@@ -30,19 +30,11 @@ const Commands = (app: App, manager: Manager) => {
                             manager.saveSettings();
                             await manager.appPlugins.disablePlugin(plugin.id);
                             Commands(app, manager);
-                            app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
-                                if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); }
-                            });
                         } else {
                             mp.enabled = true;
                             manager.saveSettings();
                             await manager.appPlugins.enablePlugin(plugin.id);
                             Commands(app, manager);
-                            setTimeout(() => {
-                                app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
-                                    if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); }
-                                });
-                            }, 1000);
                         }
                     }
                 });
@@ -65,7 +57,6 @@ const Commands = (app: App, manager: Manager) => {
                         }
                     });
                     Commands(app, manager);
-                    app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } });
                 }
             });
             manager.addCommand({
@@ -81,7 +72,6 @@ const Commands = (app: App, manager: Manager) => {
                         }
                     });
                     Commands(app, manager);
-                    setTimeout(() => { app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } }); }, 10);
                 }
             });
         });

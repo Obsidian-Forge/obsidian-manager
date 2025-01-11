@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, ToggleComponent, WorkspaceLeaf } from 'obsidian';
+import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Notice, PluginManifest, SearchComponent, Setting, ToggleComponent } from 'obsidian';
 
 import { ManagerSettings } from '../settings/data';
 import { managerOpen } from '../utils';
@@ -41,7 +41,7 @@ export class ManagerModal extends Modal {
     // 测试模式
     developerMode = false;
 
-    searchEl: any;
+    searchEl: SearchComponent;
 
     constructor(app: App, manager: Manager) {
         super(app);
@@ -53,9 +53,9 @@ export class ManagerModal extends Modal {
         this.settings = manager.settings;
         // @ts-ignore
         this.basePath = path.normalize(this.app.vault.adapter.getBasePath());
-
+        // 首次启动运行下 避免有新加入的插件
+        manager.synchronizePlugins(Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== manager.manifest.id) as PluginManifest[]);
     }
-
 
     public async showHead() {
         //@ts-ignore
@@ -76,12 +76,12 @@ export class ManagerModal extends Modal {
             window.open(this.manager.manifest.authorUrl);
         });
         // [操作行] Github
-        // const tutorialButton = new ButtonComponent(actionBar.controlEl);
-        // tutorialButton.setIcon('book-open');
-        // tutorialButton.setTooltip('教程');
-        // tutorialButton.onClick(() => {
-        //     window.open();
-        // });
+        const tutorialButton = new ButtonComponent(actionBar.controlEl);
+        tutorialButton.setIcon('book-open');
+        tutorialButton.setTooltip('教程');
+        tutorialButton.onClick(() => {
+            window.open('https://www.bilibili.com/video/BV1WyrkYMEce/');
+        });
 
         // [操作行] 重载插件
         const reloadButton = new ButtonComponent(actionBar.controlEl);
@@ -97,8 +97,15 @@ export class ManagerModal extends Modal {
         const updateButton = new ButtonComponent(actionBar.controlEl);
         updateButton.setIcon('rss');
         updateButton.setTooltip(t('管理器_检查更新_描述'));
-        updateButton.onClick(() => {
-            console.log(this.appPlugins.checkForUpdates());
+        updateButton.onClick(async () => {
+            try {
+                console.log(this.appSetting)
+                await this.appPlugins.checkForUpdates();
+                this.appSetting.open();
+                this.appSetting.openTabById('community-plugins');
+            } catch (error) {
+                console.error('检查更新时出错:', error);  // 处理可能出现的错误
+            }
         });
 
         // [操作行] 一键禁用
@@ -115,7 +122,6 @@ export class ManagerModal extends Modal {
                     this.reloadShowData();
                 }
                 Commands(this.app, this.manager);
-                setTimeout(() => { this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } }); }, 10);
             }
         });
 
@@ -134,7 +140,6 @@ export class ManagerModal extends Modal {
                 }
             }
             Commands(this.app, this.manager);
-            this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } });
         });
 
         // [操作行] 编辑模式
@@ -433,9 +438,11 @@ export class ManagerModal extends Modal {
                             await this.appPlugins.uninstallPlugin(plugin.id);
                             await this.appPlugins.loadManifests();
                             this.reloadShowData();
-                            new Notice('卸载成功');
                             // 刷新命令行
                             Commands(this.app, this.manager);
+                            // 删除同理
+                            this.manager.synchronizePlugins(Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manager.manifest.id) as PluginManifest[]);
+                            new Notice('卸载成功');
                         }).open();
 
                     });
@@ -450,16 +457,13 @@ export class ManagerModal extends Modal {
                             ManagerPlugin.enabled = true;
                             this.manager.saveSettings();
                             await this.appPlugins.enablePlugin(plugin.id);
-                            Commands(this.app, this.manager);
-                            this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } });
                         } else {
                             if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass('inactive');  // [淡化插件]
                             ManagerPlugin.enabled = false;
                             this.manager.saveSettings();
                             await this.appPlugins.disablePlugin(plugin.id);
-                            Commands(this.app, this.manager);
-                            setTimeout(() => { this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => { if (leaf.getDisplayText() == '插件不再活动') { leaf.detach(); } }); }, 10);
                         }
+                        Commands(this.app, this.manager);
                         this.reloadShowData();
                     })
                 }

@@ -1,6 +1,7 @@
 import { t } from "src/lang/inxdex";
 import BaseSetting from "../base-setting";
 import { Notice, Setting } from "obsidian";
+import Commands from "src/command";
 
 export default class ManagerGroup extends BaseSetting {
     main(): void {
@@ -38,45 +39,53 @@ export default class ManagerGroup extends BaseSetting {
                         this.manager.settings.GROUPS.push({ id, name, color });
                         this.manager.saveSettings();
                         this.settingTab.groupDisplay();
+                        Commands(this.app, this.manager);
                         new Notice(t('设置_分组设置_通知_一'));
                     } else {
                         new Notice(t('设置_分组设置_通知_二'));
                     }
                 })
             )
-        this.manager.settings.GROUPS.forEach((tag, index) => {
+
+        this.manager.settings.GROUPS.forEach((group, index) => {
             const item = new Setting(this.containerEl)
             item.settingEl.addClass('manager-setting-group__item')
-            item.setName(`${index + 1}. ${tag.id}`)
+            item.setName(`${index + 1}. `)
             item.addColorPicker(cb => cb
-                .setValue(tag.color)
+                .setValue(group.color)
                 .onChange((value) => {
-                    tag.color = value;
+                    group.color = value;
                     this.manager.saveSettings();
+                    this.settingTab.groupDisplay();
                 })
             )
             item.addText(cb => cb
-                .setValue(tag.name)
+                .setValue(group.name)
                 .onChange((value) => {
-                    tag.name = value;
+                    group.name = value;
                     this.manager.saveSettings();
+                }).inputEl.addEventListener('blur', () => {
+                    this.settingTab.groupDisplay();
                 })
             )
             item.addExtraButton(cb => cb
                 .setIcon('trash-2')
                 .onClick(() => {
-                    const hasTestGroup = this.settings.Plugins.some(plugin => plugin.group === tag.id);
+                    const hasTestGroup = this.settings.Plugins.some(plugin => plugin.group === group.id);
                     if (!hasTestGroup) {
-                        this.manager.settings.GROUPS = this.manager.settings.GROUPS.filter(t => t.id !== tag.id);
+                        this.manager.settings.GROUPS = this.manager.settings.GROUPS.filter(t => t.id !== group.id);
                         this.manager.saveSettings();
                         this.settingTab.groupDisplay();
+                        Commands(this.app, this.manager);
                         new Notice(t('设置_分组设置_通知_三'));
                     } else {
                         new Notice(t('设置_分组设置_通知_四'));
                     }
                 })
             )
+            const tagEl = this.manager.createTag(group.name, group.color, this.settings.GROUP_STYLE);
+            item.nameEl.appendChild(tagEl);
+            item.nameEl.appendText(` (${group.id})`);
         });
-
     }
 }

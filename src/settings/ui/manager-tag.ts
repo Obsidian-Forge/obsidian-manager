@@ -47,12 +47,13 @@ export default class ManagerTag extends BaseSetting {
         this.manager.settings.TAGS.forEach((tag, index) => {
             const item = new Setting(this.containerEl)
             item.setClass('manager-setting-tag__item')
-            item.setName(`${index + 1}. ${tag.id}`)
+            item.setName(`${index + 1}. `)
             item.addColorPicker(cb => cb
                 .setValue(tag.color)
                 .onChange((value) => {
                     tag.color = value;
                     this.manager.saveSettings();
+                    this.settingTab.tagDisplay();
                 })
             )
             item.addText(cb => cb
@@ -60,6 +61,8 @@ export default class ManagerTag extends BaseSetting {
                 .onChange((value) => {
                     tag.name = value;
                     this.manager.saveSettings();
+                }).inputEl.addEventListener('blur', () => {
+                    this.settingTab.tagDisplay();
                 })
             )
             item.addExtraButton(cb => cb
@@ -76,6 +79,9 @@ export default class ManagerTag extends BaseSetting {
                     }
                 })
             )
+            const tagEl = this.manager.createTag(tag.name, tag.color, this.settings.TAG_STYLE);
+            item.nameEl.appendChild(tagEl);
+            item.nameEl.appendText(` (${tag.id})`);
         });
 
     }

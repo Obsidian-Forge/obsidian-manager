@@ -41,7 +41,7 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
-        const CommandItemBar = new Setting(this.containerEl).setName('启动单条命令').setDesc('测试版');
+        const CommandItemBar = new Setting(this.containerEl).setName(t('设置_基础设置_单独命令_标题')).setDesc(t('设置_基础设置_单独命令_描述'));
         const CommandItemToggle = new ToggleComponent(CommandItemBar.controlEl);
         CommandItemToggle.setValue(this.settings.COMMAND_ITEM);
         CommandItemToggle.onChange((value) => {
@@ -49,7 +49,7 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
             Commands(this.app, this.manager);
         });
-        const CommandGroupBar = new Setting(this.containerEl).setName('启动群组命令').setDesc('测试版');
+        const CommandGroupBar = new Setting(this.containerEl).setName(t('设置_基础设置_分组命令_标题')).setDesc(t('设置_基础设置_分组命令_描述'));
         const CommandGroupToggle = new ToggleComponent(CommandGroupBar.controlEl);
         CommandGroupToggle.setValue(this.settings.COMMAND_GROUP);
         CommandGroupToggle.onChange((value) => {
@@ -57,12 +57,6 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
             Commands(this.app, this.manager);
         });
-
-
-
-        new Setting(this.containerEl)
-            .setName('新安装的插件未显示原因')
-            .setDesc('新插件安装后，需重启插件管理器才能显示。');
 
         new Setting(this.containerEl)
             .setName('首次启动需重重载所有插件原因')
