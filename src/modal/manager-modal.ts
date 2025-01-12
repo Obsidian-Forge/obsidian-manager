@@ -538,7 +538,7 @@ export class ManagerModal extends Modal {
             plugins.forEach(plugin => { plugin.enabled ? enabledCount++ : disabledCount++; });
         } else {
             totalCount = Object.keys(this.manager.appPlugins.manifests).length - 1;
-            enabledCount = this.manager.appPlugins.enabledPlugins.size - 2;
+            enabledCount = this.manager.appPlugins.enabledPlugins.size - 1;
             disabledCount = totalCount - enabledCount;
         }
         const summary = `[总计] ${totalCount} [启用] ${enabledCount} [禁用] ${disabledCount} `;

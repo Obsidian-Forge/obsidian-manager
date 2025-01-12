@@ -24,6 +24,7 @@ export default class Manager extends Plugin {
         this.addSettingTab(new ManagerSettingTab(this.app, this));
 
         this.settings.DELAY ? this.enableDelay() : this.disableDelay();
+
         Commands(this.app, this);
     }
 
@@ -115,7 +116,6 @@ export default class Manager extends Plugin {
         p1.forEach(p1Item => {
             if (!p2.some(p2Item => p2Item.id === p1Item.id)) {
                 const isEnabled = this.appPlugins.enabledPlugins.has(p1Item.id);
-                if (isEnabled) this.appPlugins.disablePluginAndSave(p1Item.id);
                 this.settings.Plugins.push({
                     'id': p1Item.id,
                     'name': p1Item.name,
