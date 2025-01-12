@@ -4,6 +4,7 @@ export interface ManagerSettings {
 	ITEM_STYLE: string;
 	GROUP_STYLE: string;
 	TAG_STYLE: string;
+	DELAY: boolean;
 	FADE_OUT_DISABLED_PLUGINS: boolean;
 	COMMAND_ITEM: boolean;
 	COMMAND_GROUP: boolean;
@@ -17,6 +18,7 @@ export const DEFAULT_SETTINGS: ManagerSettings = {
 	ITEM_STYLE: "alwaysExpand",
 	GROUP_STYLE: "a",
 	TAG_STYLE: "b",
+	DELAY: false,
 	FADE_OUT_DISABLED_PLUGINS: true,
 	COMMAND_ITEM: false,
 	COMMAND_GROUP: false,

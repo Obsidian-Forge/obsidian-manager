@@ -33,6 +33,15 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
+        const DelayBar = new Setting(this.containerEl).setName(t('设置_基础设置_延时启动_标题')).setDesc(t('设置_基础设置_延时启动_描述'));
+        const DelayToggle = new ToggleComponent(DelayBar.controlEl);
+        DelayToggle.setValue(this.settings.DELAY);
+        DelayToggle.onChange((value) => {
+            this.settings.DELAY = value;
+            this.manager.saveSettings();
+            value ? this.manager.enableDelaysForAllPlugins() : this.manager.disableDelaysForAllPlugins();
+        });
+
         const fadeOutDisabledPluginsBar = new Setting(this.containerEl).setName(t('设置_基础设置_淡化插件_标题')).setDesc(t('设置_基础设置_淡化插件_描述'));
         const fadeOutDisabledPluginsToggle = new ToggleComponent(fadeOutDisabledPluginsBar.controlEl);
         fadeOutDisabledPluginsToggle.setValue(this.settings.FADE_OUT_DISABLED_PLUGINS);
@@ -49,6 +58,7 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
             Commands(this.app, this.manager);
         });
+
         const CommandGroupBar = new Setting(this.containerEl).setName(t('设置_基础设置_分组命令_标题')).setDesc(t('设置_基础设置_分组命令_描述'));
         const CommandGroupToggle = new ToggleComponent(CommandGroupBar.controlEl);
         CommandGroupToggle.setValue(this.settings.COMMAND_GROUP);
@@ -59,8 +69,8 @@ export default class ManagerBasis extends BaseSetting {
         });
 
         new Setting(this.containerEl)
-            .setName('首次启动需重重载所有插件原因')
-            .setDesc('为确保本插件优先启动，首次使用时需重启插件，之后由本插件接管启动流程。');
+            .setName('如果遇到本插件与其他插件冲突')
+            .setDesc('个人能力有限，无法修复此问题，请关闭延时启动，即可解决一切冲突问题。');
 
     }
 }

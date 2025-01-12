@@ -55,7 +55,7 @@ export class TagsModal extends Modal {
                 );
             const tempEl = createSpan({ cls: 'manager-item__name-group' });
             itemEl.nameEl.appendChild(tempEl);
-            const tagEl = this.managerModal.createTag(tag.name, tag.color, this.settings.TAG_STYLE);
+            const tagEl = this.manager.createTag(tag.name, tag.color, this.settings.TAG_STYLE);
             tempEl.appendChild(tagEl);
         }
     }

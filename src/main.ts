@@ -8,6 +8,7 @@ import Commands from './command';
 export default class Manager extends Plugin {
     public settings: ManagerSettings;
     public managerModal: ManagerModal;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public appPlugins: any;
     public appWorkspace: Workspace;
 
@@ -18,20 +19,67 @@ export default class Manager extends Plugin {
 
         console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
         await this.loadSettings();
+
         this.addRibbonIcon('folder-cog', t('通用_管理器_文本'), () => { this.managerModal = new ManagerModal(this.app, this); this.managerModal.open(); });
         this.addSettingTab(new ManagerSettingTab(this.app, this));
-        const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id) as PluginManifest[];
-        // 检测插件是否开启 如果开启则关闭
-        // plugins.forEach((plugin: PluginManifest) => this.initPlugin(plugin));
-        // // 检查配置文件
-        // this.removeMissingPlugins(plugins);
-        this.synchronizePlugins(plugins);
-        // 开始延时启动插件
-        plugins.forEach((plugin: PluginManifest) => this.startPlugin(plugin.id));
+
+        this.settings.DELAY ? this.enableDelay() : this.disableDelay();
         Commands(this.app, this);
     }
 
     public async onunload() {
+        if (this.settings.DELAY) this.disableDelaysForAllPlugins();
+    }
+
+    public async loadSettings() { this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()); }
+    public async saveSettings() { await this.saveData(this.settings); }
+
+    // 关闭延时 调用
+    public disableDelay() {
+        const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id) as PluginManifest[];
+        this.synchronizePlugins(plugins);
+    }
+
+    // 开启延时 调用
+    public enableDelay() {
+        const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id) as PluginManifest[];
+        // 同步插件
+        this.synchronizePlugins(plugins);
+        // 开始延时启动插件
+        plugins.forEach((plugin: PluginManifest) => this.startPluginWithDelay(plugin.id));
+    }
+
+    // 为所有插件启动延迟
+    public enableDelaysForAllPlugins() {
+        // 获取所有插件
+        const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id) as PluginManifest[];
+        // 同步插件
+        this.synchronizePlugins(plugins);
+        plugins.forEach(async (plugin: PluginManifest) => {
+            // 插件状态
+            const isEnabled = this.appPlugins.enabledPlugins.has(plugin.id);
+            if (isEnabled) {
+                // 1. 关闭插件
+                await this.appPlugins.disablePluginAndSave(plugin.id);
+                // 2. 开启插件
+                await this.appPlugins.enablePlugin(plugin.id);
+                // 3. 切换配置状态
+                const mp = this.settings.Plugins.find(p => p.id === plugin.id);
+                if (mp) mp.enabled = true;
+                // 4. 保存状态
+                this.saveSettings();
+            } else {
+                // 1. 切换配置文件
+                const mp = this.settings.Plugins.find(p => p.id === plugin.id);
+                if (mp) mp.enabled = false;
+                // 2. 保存状态
+                this.saveSettings();
+            }
+        });
+    }
+
+    // 为所有插件关闭延迟
+    public disableDelaysForAllPlugins() {
         const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id);
         plugins.forEach(async (pm: PluginManifest) => {
             const plugin = this.settings.Plugins.find(p => p.id === pm.id)
@@ -44,28 +92,8 @@ export default class Manager extends Plugin {
         });
     }
 
-    public async loadSettings() { this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()); }
-    public async saveSettings() { await this.saveData(this.settings); }
-
-    // private initPlugin(plugin: PluginManifest) {
-    //     const isEnabled = this.appPlugins.enabledPlugins.has(plugin.id);
-    //     if (isEnabled) this.appPlugins.disablePluginAndSave(plugin.id);
-    //     if (!(this.settings.Plugins.some(p => p.id === plugin.id))) {
-    //         const mp: ManagerPlugin = {
-    //             'id': plugin.id,
-    //             'name': plugin.name,
-    //             'desc': plugin.description,
-    //             'group': '',
-    //             'tags': [],
-    //             'enabled': isEnabled,
-    //             'delay': '',
-    //         }
-    //         this.settings.Plugins.push(mp);
-    //         this.saveSettings();
-    //     }
-    // }
-
-    public startPlugin(id: string) {
+    // 延时启动指定插件
+    private startPluginWithDelay(id: string) {
         const plugin = this.settings.Plugins.find(p => p.id === id);
         if (plugin && plugin.enabled) {
             const delay = this.settings.DELAYS.find(item => item.id === plugin.delay);
@@ -76,15 +104,7 @@ export default class Manager extends Plugin {
         }
     }
 
-    public removeMissingPlugins(p1: PluginManifest[]) {
-        const p2 = this.settings.Plugins;
-        if (p1.length < p2.length) {
-            const missingPlugins = p2.filter(p2Item => !p1.some(p1Item => p1Item.id === p2Item.id));
-            this.settings.Plugins = this.settings.Plugins.filter(pm => !missingPlugins.some(mp => mp.id === pm.id));
-            this.saveSettings();
-        }
-    }
-
+    // 同步插件到配置文件
     public synchronizePlugins(p1: PluginManifest[]) {
         const p2 = this.settings.Plugins;
         p2.forEach(p2Item => {
@@ -107,7 +127,6 @@ export default class Manager extends Plugin {
                 });
             }
         });
-
         // 保存设置
         this.saveSettings();
     }

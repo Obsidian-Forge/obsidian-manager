@@ -51,7 +51,7 @@ export class GroupModal extends Modal {
 
             const groupEl = createSpan({ cls: 'manager-item__name-group' });
             itemEl.nameEl.appendChild(groupEl);
-            const tag = this.managerModal.createTag(group.name, group.color, this.settings.GROUP_STYLE);
+            const tag = this.manager.createTag(group.name, group.color, this.settings.GROUP_STYLE);
             groupEl.appendChild(tag);
         }
     }
