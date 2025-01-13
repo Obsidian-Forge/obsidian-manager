@@ -1,4 +1,3 @@
-import { t } from "src/lang/inxdex";
 import BaseSetting from "../base-setting";
 import { Notice, Setting } from "obsidian";
 
@@ -9,7 +8,7 @@ export default class ManagerTag extends BaseSetting {
         let color = '';
         new Setting(this.containerEl)
             .setHeading()
-            .setName(t('通用_新增_文本'))
+            .setName(this.manager.translator.t('通用_新增_文本'))
             .addColorPicker(cb => cb
                 .setValue(color)
                 .onChange((value) => {
@@ -24,7 +23,7 @@ export default class ManagerTag extends BaseSetting {
                 })
             )
             .addText(cb => cb
-                .setPlaceholder(t('通用_名称_文本'))
+                .setPlaceholder(this.manager.translator.t('通用_名称_文本'))
                 .onChange((value) => {
                     name = value;
                 })
@@ -38,9 +37,9 @@ export default class ManagerTag extends BaseSetting {
                         this.manager.settings.TAGS.push({ id, name, color });
                         this.manager.saveSettings();
                         this.settingTab.tagDisplay();
-                        new Notice(t('设置_标签设置_通知_一'));
+                        new Notice(this.manager.translator.t('设置_标签设置_通知_一'));
                     } else {
-                        new Notice(t('设置_标签设置_通知_二'));
+                        new Notice(this.manager.translator.t('设置_标签设置_通知_二'));
                     }
                 })
             )
@@ -73,9 +72,9 @@ export default class ManagerTag extends BaseSetting {
                         this.manager.settings.TAGS = this.manager.settings.TAGS.filter(t => t.id !== tag.id);
                         this.manager.saveSettings();
                         this.settingTab.tagDisplay();
-                        new Notice(t('设置_标签设置_通知_三'));
+                        new Notice(this.manager.translator.t('设置_标签设置_通知_三'));
                     } else {
-                        new Notice(t('设置_标签设置_通知_四'));
+                        new Notice(this.manager.translator.t('设置_标签设置_通知_四'));
                     }
                 })
             )

@@ -1,20 +1,19 @@
 import { App, PluginSettingTab } from 'obsidian';
-import I18N from "../main";
+import Manager from "../main";
 
 import ManagerBasis from './ui/manager-basis';
 import ManagerGroup from './ui/manager-group';
 import ManagerTag from './ui/manager-tag';
-import { t } from 'src/lang/inxdex';
 import ManagerDelay from './ui/manager-delay';
 
 class ManagerSettingTab extends PluginSettingTab {
-	i18n: I18N;
+	manager: Manager;
 	app: App;
 	contentEl: HTMLDivElement;
 
-	constructor(app: App, i18n: I18N) {
-		super(app, i18n);
-		this.i18n = i18n;
+	constructor(app: App, manager: Manager) {
+		super(app, manager);
+		this.manager = manager;
 		this.app = app;
 	}
 
@@ -28,11 +27,11 @@ class ManagerSettingTab extends PluginSettingTab {
 		this.contentEl.addClass('manager-setting__content');
 
 		const tabItems = [
-			{ text: t('设置_基础设置_前缀'), content: () => this.basisDisplay() },
-			{ text: t('设置_分组设置_前缀'), content: () => this.groupDisplay() },
-			{ text: t('设置_标签设置_前缀'), content: () => this.tagDisplay() },
-			{ text: t('设置_延迟设置_前缀'), content: () => this.delayDisplay() }, 
-			
+			{ text: this.manager.translator.t('设置_基础设置_前缀'), content: () => this.basisDisplay() },
+			{ text: this.manager.translator.t('设置_分组设置_前缀'), content: () => this.groupDisplay() },
+			{ text: this.manager.translator.t('设置_标签设置_前缀'), content: () => this.tagDisplay() },
+			{ text: this.manager.translator.t('设置_延迟设置_前缀'), content: () => this.delayDisplay() },
+
 		];
 		const tabItemsEls: HTMLDivElement[] = [];
 

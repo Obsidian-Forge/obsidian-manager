@@ -1,4 +1,3 @@
-import { t } from "src/lang/inxdex";
 import BaseSetting from "../base-setting";
 import { Notice, Setting } from "obsidian";
 
@@ -9,7 +8,7 @@ export default class ManagerDelay extends BaseSetting {
         let time = 0;
         new Setting(this.containerEl)
             .setHeading()
-            .setName(t('通用_新增_文本'))
+            .setName(this.manager.translator.t('通用_新增_文本'))
             .addSlider(cb => cb
                 .setLimits(0, 100, 1)
                 .setValue(time)
@@ -25,7 +24,7 @@ export default class ManagerDelay extends BaseSetting {
                 })
             )
             .addText(cb => cb
-                .setPlaceholder(t('通用_名称_文本'))
+                .setPlaceholder(this.manager.translator.t('通用_名称_文本'))
                 .onChange((value) => {
                     name = value;
                 })
@@ -38,9 +37,9 @@ export default class ManagerDelay extends BaseSetting {
                         this.manager.settings.DELAYS.push({ id, name, time });
                         this.manager.saveSettings();
                         this.settingTab.delayDisplay();
-                        new Notice(t('设置_延迟设置_通知_一'));
+                        new Notice(this.manager.translator.t('设置_延迟设置_通知_一'));
                     } else {
-                        new Notice(t('设置_延迟设置_通知_二'));
+                        new Notice(this.manager.translator.t('设置_延迟设置_通知_二'));
                     }
                 })
             ) 
@@ -72,9 +71,9 @@ export default class ManagerDelay extends BaseSetting {
                         this.manager.settings.DELAYS = this.manager.settings.DELAYS.filter(t => t.id !== delay.id);
                         this.manager.saveSettings();
                         this.settingTab.delayDisplay();
-                        new Notice(t('设置_延迟设置_通知_三'));
+                        new Notice(this.manager.translator.t('设置_延迟设置_通知_三'));
                     } else {
-                        new Notice(t('设置_延迟设置_通知_四'));
+                        new Notice(this.manager.translator.t('设置_延迟设置_通知_四'));
                     }
                 })
             )

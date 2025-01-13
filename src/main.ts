@@ -1,7 +1,7 @@
 import { Plugin, PluginManifest, Workspace } from 'obsidian';
 import { DEFAULT_SETTINGS, ManagerSettings } from './settings/data';
 import { ManagerSettingTab } from './settings';
-import { t } from './lang/inxdex';
+import { Translator } from './lang/inxdex';
 import { ManagerModal } from './modal/manager-modal';
 import Commands from './command';
 
@@ -11,6 +11,7 @@ export default class Manager extends Plugin {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public appPlugins: any;
     public appWorkspace: Workspace;
+    public translator: Translator;
 
     public async onload() {
         // @ts-ignore
@@ -19,8 +20,11 @@ export default class Manager extends Plugin {
 
         console.log(`%c ${this.manifest.name} %c v${this.manifest.version} `, `padding: 2px; border-radius: 2px 0 0 2px; color: #fff; background: #5B5B5B;`, `padding: 2px; border-radius: 0 2px 2px 0; color: #fff; background: #409EFF;`);
         await this.loadSettings();
-
-        this.addRibbonIcon('folder-cog', t('通用_管理器_文本'), () => { this.managerModal = new ManagerModal(this.app, this); this.managerModal.open(); });
+        // 初始化语言系统
+        this.translator = new Translator(this);
+        // 初始化侧边栏图标
+        this.addRibbonIcon('folder-cog', this.translator.t('通用_管理器_文本'), () => { this.managerModal = new ManagerModal(this.app, this); this.managerModal.open(); });
+        // 初始化设置界面
         this.addSettingTab(new ManagerSettingTab(this.app, this));
 
         this.settings.DELAY ? this.enableDelay() : this.disableDelay();

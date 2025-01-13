@@ -12,8 +12,8 @@ export default abstract class BaseSetting {
 
 	constructor(obj: ManagerSettingTab) {
 		this.settingTab = obj;
-		this.manager = obj.i18n;
-		this.settings = obj.i18n.settings;
+		this.manager = obj.manager;
+		this.settings = obj.manager.settings;
 		this.containerEl = obj.contentEl;
 		this.app = obj.app;
 	}

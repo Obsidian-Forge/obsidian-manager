@@ -1,14 +1,16 @@
 import { App, ExtraButtonComponent, Modal, Setting } from 'obsidian';
 import { ManagerSettings } from '../settings/data';
-import { t } from 'src/lang/inxdex';
+import Manager from 'main';
 
 export class DeleteModal extends Modal {
     settings: ManagerSettings;
+    manager: Manager;
 
     private deleteCallback: () => void;
 
-    constructor(app: App, deleteCallback: () => void) {
+    constructor(app: App, manager: Manager, deleteCallback: () => void) {
         super(app);
+        this.manager = manager;
         this.deleteCallback = deleteCallback;
     }
 
@@ -21,9 +23,9 @@ export class DeleteModal extends Modal {
         this.contentEl.addClass('manager-item-container');
 
         // [标题行]
-        const titleBar = new Setting(this.titleEl) 
+        const titleBar = new Setting(this.titleEl)
         titleBar.setClass('manager-delete__title')
-        titleBar.setName(t('卸载_标题'));
+        titleBar.setName(this.manager.translator.t('卸载_标题'));
 
         // [标题行] 关闭按钮
         const closeButton = new ExtraButtonComponent(titleBar.controlEl)
@@ -33,19 +35,19 @@ export class DeleteModal extends Modal {
 
     private async showData() {
         const titleBar = new Setting(this.titleEl)
-        titleBar.setName(t('卸载_提示'));
+        titleBar.setName(this.manager.translator.t('卸载_提示'));
         const actionBar = new Setting(this.titleEl)
         actionBar.setClass('manager-delete__action')
         actionBar.addButton(cb => cb
             .setWarning()
-            .setButtonText(t('卸载_卸载'))
+            .setButtonText(this.manager.translator.t('卸载_卸载'))
             .onClick(() => {
                 this.deleteCallback();
                 this.close();
             })
         );
         actionBar.addButton(cb => cb
-            .setButtonText(t('卸载_取消'))
+            .setButtonText(this.manager.translator.t('卸载_取消')) 
             .onClick(() => {
                 this.close();
             })

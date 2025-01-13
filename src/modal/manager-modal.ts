@@ -4,7 +4,6 @@ import { App, ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, N
 import { ManagerSettings } from '../settings/data';
 import { managerOpen } from '../utils';
 
-import { t } from '../lang/inxdex';
 import Manager from 'main';
 import { GroupModal } from './group-modal';
 import { TagsModal } from './tags-modal';
@@ -72,12 +71,12 @@ export class ManagerModal extends Modal {
         this.modalEl.appendChild(this.footEl);
 
         // [操作行]
-        const actionBar = new Setting(this.titleEl).setClass('manager-bar__action').setName(t('通用_操作_文本'));
+        const actionBar = new Setting(this.titleEl).setClass('manager-bar__action').setName(this.manager.translator.t('通用_操作_文本'));
 
         // [操作行] Github
         const githubButton = new ButtonComponent(actionBar.controlEl);
         githubButton.setIcon('github');
-        githubButton.setTooltip(t('管理器_GITHUB_描述'));
+        githubButton.setTooltip(this.manager.translator.t('管理器_GITHUB_描述'));
         githubButton.onClick(() => {
             window.open(this.manager.manifest.authorUrl);
         });
@@ -92,7 +91,7 @@ export class ManagerModal extends Modal {
         // [操作行] 重载插件
         const reloadButton = new ButtonComponent(actionBar.controlEl);
         reloadButton.setIcon('refresh-ccw');
-        reloadButton.setTooltip(t('管理器_重载插件_描述'));
+        reloadButton.setTooltip(this.manager.translator.t('管理器_重载插件_描述'));
         reloadButton.onClick(async () => {
             new Notice('重新加载第三方插件');
             await this.appPlugins.loadManifests();
@@ -102,7 +101,7 @@ export class ManagerModal extends Modal {
         // [操作行] 检查更新
         const updateButton = new ButtonComponent(actionBar.controlEl);
         updateButton.setIcon('rss');
-        updateButton.setTooltip(t('管理器_检查更新_描述'));
+        updateButton.setTooltip(this.manager.translator.t('管理器_检查更新_描述'));
         updateButton.onClick(async () => {
             try {
                 await this.appPlugins.checkForUpdates();
@@ -116,7 +115,7 @@ export class ManagerModal extends Modal {
         // [操作行] 一键禁用
         const disableButton = new ButtonComponent(actionBar.controlEl);
         disableButton.setIcon('square');
-        disableButton.setTooltip(t('管理器_一键禁用_描述'));
+        disableButton.setTooltip(this.manager.translator.t('管理器_一键禁用_描述'));
         disableButton.onClick(async () => {
             for (const plugin of this.displayPlugins) {
                 if (this.settings.DELAY) {
@@ -140,7 +139,7 @@ export class ManagerModal extends Modal {
         // [操作行] 一键启用
         const enableButton = new ButtonComponent(actionBar.controlEl)
         enableButton.setIcon('square-check')
-        enableButton.setTooltip(t('管理器_一键启用_描述'))
+        enableButton.setTooltip(this.manager.translator.t('管理器_一键启用_描述'))
         enableButton.onClick(async () => {
             for (const plugin of this.displayPlugins) {
                 if (this.settings.DELAY) {
@@ -164,7 +163,7 @@ export class ManagerModal extends Modal {
         // [操作行] 编辑模式
         const editorButton = new ButtonComponent(actionBar.controlEl)
         this.editorMode ? editorButton.setIcon('pen-off') : editorButton.setIcon('pen');
-        editorButton.setTooltip(t('管理器_编辑模式_描述'))
+        editorButton.setTooltip(this.manager.translator.t('管理器_编辑模式_描述'))
         editorButton.onClick(() => {
             this.editorMode = !this.editorMode;
             this.editorMode ? editorButton.setIcon('pen-off') : editorButton.setIcon('pen');
@@ -174,7 +173,7 @@ export class ManagerModal extends Modal {
         // [操作行] 插件设置
         const settingsButton = new ButtonComponent(actionBar.controlEl)
         settingsButton.setIcon('settings')
-        settingsButton.setTooltip(t('管理器_插件设置_描述'))
+        settingsButton.setTooltip(this.manager.translator.t('管理器_插件设置_描述'))
         settingsButton.onClick(() => {
             this.appSetting.open();
             this.appSetting.openTabById(this.manager.manifest.id);
@@ -194,12 +193,12 @@ export class ManagerModal extends Modal {
         }
 
         // [搜索行] 
-        const searchBar = new Setting(this.titleEl).setClass('manager-bar__search').setName(t('通用_搜索_文本'));
+        const searchBar = new Setting(this.titleEl).setClass('manager-bar__search').setName(this.manager.translator.t('通用_搜索_文本'));
 
         // [搜索行] 仅启用
         const onlyEnabled = new ButtonComponent(searchBar.controlEl);
         this.onlyEnabled ? onlyEnabled.setIcon('toggle-right') : onlyEnabled.setIcon('toggle-left');
-        onlyEnabled.setTooltip(t('管理器_仅启用_描述'));
+        onlyEnabled.setTooltip(this.manager.translator.t('管理器_仅启用_描述'));
         onlyEnabled.onClick(() => {
             this.onlyEnabled = !this.onlyEnabled;
             this.onlyEnabled ? onlyEnabled.setIcon('toggle-right') : onlyEnabled.setIcon('toggle-left');
@@ -208,7 +207,7 @@ export class ManagerModal extends Modal {
 
         // [搜索行] 分组选择列表
         const groupCounts = this.settings.Plugins.reduce((acc: { [key: string]: number }, plugin) => { const groupId = plugin.group || ''; acc[groupId] = (acc[groupId] || 0) + 1; return acc; }, { '': 0 });
-        const groups = this.settings.GROUPS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${groupCounts[item.id] || 0})`; return acc; }, { '': '无分组' });
+        const groups = this.settings.GROUPS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${groupCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无分组_文本') });
         const groupsDropdown = new DropdownComponent(searchBar.controlEl);
         groupsDropdown.addOptions(groups);
         groupsDropdown.setValue(this.group !== '' ? this.group : '');
@@ -219,7 +218,7 @@ export class ManagerModal extends Modal {
 
         // [搜索行] 标签选择列表
         const tagCounts: { [key: string]: number } = this.settings.Plugins.reduce((acc, plugin) => { plugin.tags.forEach(tag => { acc[tag] = (acc[tag] || 0) + 1; }); return acc; }, {} as { [key: string]: number });
-        const tags = this.settings.TAGS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${tagCounts[item.id] || 0})`; return acc; }, { '': '无标签' });
+        const tags = this.settings.TAGS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${tagCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无标签_文本') });
         const tagsDropdown = new DropdownComponent(searchBar.controlEl);
         tagsDropdown.addOptions(tags);
         tagsDropdown.setValue(this.tag);
@@ -231,7 +230,7 @@ export class ManagerModal extends Modal {
         // [搜索行] 延迟选择列表
         if (this.settings.DELAY) {
             const delayCounts = this.settings.Plugins.reduce((acc: { [key: string]: number }, plugin) => { const delay = plugin.delay || ''; acc[delay] = (acc[delay] || 0) + 1; return acc; }, { '': 0 });
-            const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${delayCounts[item.id] || 0})`; return acc; }, { '': '无延迟' });
+            const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${delayCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无延迟_文本') });
             const delaysDropdown = new DropdownComponent(searchBar.controlEl);
             delaysDropdown.addOptions(delays);
             delaysDropdown.setValue(this.delay);
@@ -428,7 +427,7 @@ export class ManagerModal extends Modal {
                     if (isEnabled) {
                         const openPluginSetting = new ExtraButtonComponent(itemEl.controlEl)
                         openPluginSetting.setIcon('settings')
-                        openPluginSetting.setTooltip(t('管理器_打开设置_描述'))
+                        openPluginSetting.setTooltip(this.manager.translator.t('管理器_打开设置_描述'))
                         openPluginSetting.onClick(() => {
                             openPluginSetting.setDisabled(true);
                             this.appSetting.open();
@@ -439,19 +438,19 @@ export class ManagerModal extends Modal {
                     // [按钮] 打开目录
                     const openPluginDirButton = new ExtraButtonComponent(itemEl.controlEl)
                     openPluginDirButton.setIcon('folder-open')
-                    openPluginDirButton.setTooltip(t('管理器_打开目录_描述'))
+                    openPluginDirButton.setTooltip(this.manager.translator.t('管理器_打开目录_描述'))
                     openPluginDirButton.onClick(() => {
                         openPluginDirButton.setDisabled(true);
-                        managerOpen(pluginDir);
+                        managerOpen(pluginDir, this.manager);
                         openPluginDirButton.setDisabled(false);
                     });
 
                     // [按钮] 删除插件
                     const deletePluginButton = new ExtraButtonComponent(itemEl.controlEl)
                     deletePluginButton.setIcon('trash')
-                    deletePluginButton.setTooltip(t('管理器_删除插件_描述'))
+                    deletePluginButton.setTooltip(this.manager.translator.t('管理器_删除插件_描述'))
                     deletePluginButton.onClick(async () => {
-                        new DeleteModal(this.app, async () => {
+                        new DeleteModal(this.app, this.manager, async () => {
                             await this.appPlugins.uninstallPlugin(plugin.id);
                             await this.appPlugins.loadManifests();
                             this.reloadShowData();
@@ -459,14 +458,14 @@ export class ManagerModal extends Modal {
                             Commands(this.app, this.manager);
                             // 删除同理
                             this.manager.synchronizePlugins(Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manager.manifest.id) as PluginManifest[]);
-                            new Notice('卸载成功');
+                            new Notice(this.manager.translator.t('卸载_通知_一'));
                         }).open();
 
                     });
 
                     // [按钮] 切换状态
                     const toggleSwitch = new ToggleComponent(itemEl.controlEl)
-                    toggleSwitch.setTooltip(t('管理器_切换状态_描述'))
+                    toggleSwitch.setTooltip(this.manager.translator.t('管理器_切换状态_描述'))
                     toggleSwitch.setValue(isEnabled)
                     toggleSwitch.onChange(async () => {
                         if (this.settings.DELAY) {
@@ -499,7 +498,7 @@ export class ManagerModal extends Modal {
                     // [按钮] 还原内容
                     const reloadButton = new ExtraButtonComponent(itemEl.controlEl)
                     reloadButton.setIcon('refresh-ccw')
-                    reloadButton.setTooltip(t('管理器_还原内容_描述'))
+                    reloadButton.setTooltip(this.manager.translator.t('管理器_还原内容_描述'))
                     reloadButton.onClick(() => {
                         ManagerPlugin.name = plugin.name;
                         ManagerPlugin.desc = plugin.description;
@@ -541,7 +540,7 @@ export class ManagerModal extends Modal {
             enabledCount = this.manager.appPlugins.enabledPlugins.size - 1;
             disabledCount = totalCount - enabledCount;
         }
-        const summary = `[总计] ${totalCount} [启用] ${enabledCount} [禁用] ${disabledCount} `;
+        const summary = `[${this.manager.translator.t('通用_总计_文本')}] ${totalCount} [${this.manager.translator.t('通用_启用_文本')}] ${enabledCount} [${this.manager.translator.t('通用_禁用_文本')}] ${disabledCount} `;
         return summary;
     }
 

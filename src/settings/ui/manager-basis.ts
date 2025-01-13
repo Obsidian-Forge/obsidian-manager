@@ -2,11 +2,24 @@ import BaseSetting from "../base-setting";
 import { DropdownComponent, Setting, ToggleComponent } from "obsidian";
 import Commands from "src/command";
 import { GROUP_STYLE, ITEM_STYLE, TAG_STYLE } from "src/data/data";
-import { t } from "src/lang/inxdex";
 
 export default class ManagerBasis extends BaseSetting {
     main(): void {
-        const itemStyleBar = new Setting(this.containerEl).setName(t('设置_基础设置_目录样式_标题')).setDesc(t('设置_基础设置_目录样式_描述'));
+        const languageBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_语言_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_语言_描述'));
+        const languageDropdown = new DropdownComponent(languageBar.controlEl);
+        languageDropdown.addOptions(this.manager.translator.language);
+        languageDropdown.setValue(this.settings.LANGUAGE);
+        languageDropdown.onChange((value) => {
+            this.settings.LANGUAGE = value;
+            this.manager.saveSettings();
+            this.settingTab.basisDisplay();
+        });
+
+        const itemStyleBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_目录样式_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_目录样式_描述'));
         const itemStyleDropdown = new DropdownComponent(itemStyleBar.controlEl);
         itemStyleDropdown.addOptions(ITEM_STYLE);
         itemStyleDropdown.setValue(this.settings.ITEM_STYLE);
@@ -15,7 +28,9 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
-        const groupStyleBar = new Setting(this.containerEl).setName(t('设置_基础设置_分组样式_标题')).setDesc(t('设置_基础设置_分组样式_描述'));
+        const groupStyleBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_分组样式_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_分组样式_描述'));
         const groupStyleDropdown = new DropdownComponent(groupStyleBar.controlEl);
         groupStyleDropdown.addOptions(GROUP_STYLE);
         groupStyleDropdown.setValue(this.settings.GROUP_STYLE);
@@ -24,7 +39,9 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
-        const tagStyleBar = new Setting(this.containerEl).setName(t('设置_基础设置_标签样式_标题')).setDesc(t('设置_基础设置_标签样式_描述'));
+        const tagStyleBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_标签样式_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_标签样式_描述'));
         const tagStyleDropdown = new DropdownComponent(tagStyleBar.controlEl);
         tagStyleDropdown.addOptions(TAG_STYLE);
         tagStyleDropdown.setValue(this.settings.TAG_STYLE);
@@ -33,7 +50,9 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
-        const DelayBar = new Setting(this.containerEl).setName(t('设置_基础设置_延时启动_标题')).setDesc(t('设置_基础设置_延时启动_描述'));
+        const DelayBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_延时启动_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_延时启动_描述'));
         const DelayToggle = new ToggleComponent(DelayBar.controlEl);
         DelayToggle.setValue(this.settings.DELAY);
         DelayToggle.onChange((value) => {
@@ -42,7 +61,9 @@ export default class ManagerBasis extends BaseSetting {
             value ? this.manager.enableDelaysForAllPlugins() : this.manager.disableDelaysForAllPlugins();
         });
 
-        const fadeOutDisabledPluginsBar = new Setting(this.containerEl).setName(t('设置_基础设置_淡化插件_标题')).setDesc(t('设置_基础设置_淡化插件_描述'));
+        const fadeOutDisabledPluginsBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_淡化插件_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_淡化插件_描述'));
         const fadeOutDisabledPluginsToggle = new ToggleComponent(fadeOutDisabledPluginsBar.controlEl);
         fadeOutDisabledPluginsToggle.setValue(this.settings.FADE_OUT_DISABLED_PLUGINS);
         fadeOutDisabledPluginsToggle.onChange((value) => {
@@ -50,7 +71,9 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
-        const CommandItemBar = new Setting(this.containerEl).setName(t('设置_基础设置_单独命令_标题')).setDesc(t('设置_基础设置_单独命令_描述'));
+        const CommandItemBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_单独命令_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_单独命令_描述'));
         const CommandItemToggle = new ToggleComponent(CommandItemBar.controlEl);
         CommandItemToggle.setValue(this.settings.COMMAND_ITEM);
         CommandItemToggle.onChange((value) => {
@@ -59,7 +82,9 @@ export default class ManagerBasis extends BaseSetting {
             Commands(this.app, this.manager);
         });
 
-        const CommandGroupBar = new Setting(this.containerEl).setName(t('设置_基础设置_分组命令_标题')).setDesc(t('设置_基础设置_分组命令_描述'));
+        const CommandGroupBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_分组命令_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_分组命令_描述'));
         const CommandGroupToggle = new ToggleComponent(CommandGroupBar.controlEl);
         CommandGroupToggle.setValue(this.settings.COMMAND_GROUP);
         CommandGroupToggle.onChange((value) => {
@@ -69,8 +94,7 @@ export default class ManagerBasis extends BaseSetting {
         });
 
         new Setting(this.containerEl)
-            .setName('如果遇到本插件与其他插件冲突')
-            .setDesc('个人能力有限，无法修复此问题，请关闭延时启动，即可解决一切冲突问题。');
-
+            .setName(this.manager.translator.t('设置_提示_一_标题'))
+            .setDesc(this.manager.translator.t('设置_提示_一_描述'));
     }
 }

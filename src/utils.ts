@@ -1,6 +1,6 @@
 import { Notice, Platform } from 'obsidian';
 import { exec } from 'child_process';
-import { t } from './lang/inxdex';
+import Manager from 'main';
 
 /**
  * 打开文件或文件夹的操作系统命令。
@@ -9,15 +9,15 @@ import { t } from './lang/inxdex';
  * @description 根据操作系统执行相应的命令来打开文件夹。在Windows上使用'start'命令，在Mac上使用'open'命令。
  * 如果操作成功，显示成功通知；如果失败，显示错误通知。
  */
-export const managerOpen = (dir: string) => {
+export const managerOpen = (dir: string, manager: Manager) => {
 	if (Platform.isDesktop) {
 		exec(`start "" "${dir}"`, (error) => {
-			if (error) { new Notice(t('通用_失败_文本')); } else { new Notice(t('通用_成功_文本')); }
+			if (error) { new Notice(manager.translator.t('通用_失败_文本')); } else { new Notice(manager.translator.t('通用_成功_文本')); }
 		});
 	}
 	if (Platform.isMacOS) {
 		exec(`open ${dir}`, (error) => {
-			if (error) { new Notice(t('通用_失败_文本')); } else { new Notice(t('通用_成功_文本')); }
+			if (error) { new Notice(manager.translator.t('通用_失败_文本')); } else { new Notice(manager.translator.t('通用_成功_文本')); }
 		});
 	}
 }
