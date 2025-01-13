@@ -83,7 +83,7 @@ export class ManagerModal extends Modal {
         // [操作行] Github
         const tutorialButton = new ButtonComponent(actionBar.controlEl);
         tutorialButton.setIcon('book-open');
-        tutorialButton.setTooltip('教程');
+        tutorialButton.setTooltip(this.manager.translator.t('管理器_视频教程_描述'));
         tutorialButton.onClick(() => {
             window.open('https://www.bilibili.com/video/BV1WyrkYMEce/');
         });

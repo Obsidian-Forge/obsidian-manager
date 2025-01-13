@@ -13,6 +13,11 @@ export default {
     通用_启用_文本: 'Enable',
     通用_禁用_文本: 'Disable',
 
+    命令行_启用_文本: 'Enable',
+    命令行_禁用_文本: 'Disable',
+    命令行_分组_文本: 'Group',
+    命令行_一键启用_文本: 'One - click Enable',
+    命令行_一键禁用_文本: 'One - click Disable',
 
     管理器_GITHUB_描述: 'Visit the author\'s GitHub page to view project details, update logs, participate in discussions, and contribute code.',
     管理器_视频教程_描述: 'Access video tutorials',

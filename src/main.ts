@@ -26,9 +26,7 @@ export default class Manager extends Plugin {
         this.addRibbonIcon('folder-cog', this.translator.t('通用_管理器_文本'), () => { this.managerModal = new ManagerModal(this.app, this); this.managerModal.open(); });
         // 初始化设置界面
         this.addSettingTab(new ManagerSettingTab(this.app, this));
-
         this.settings.DELAY ? this.enableDelay() : this.disableDelay();
-
         Commands(this.app, this);
     }
 

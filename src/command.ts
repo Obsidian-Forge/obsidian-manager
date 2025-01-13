@@ -85,7 +85,7 @@ const Commands = (app: App, manager: Manager) => {
                 const enabled = manager.appPlugins.enabledPlugins.has(plugin.id);
                 manager.addCommand({
                     id: `manager-${plugin.id}`,
-                    name: `${enabled ? '关闭' : '开启'} ${plugin.name} `,
+                    name: `${enabled ? manager.translator.t('命令行_禁用_文本') : manager.translator.t('命令行_启用_文本')} ${plugin.name} `,
                     callback: async () => {
                         if (enabled) {
                             await manager.appPlugins.disablePluginAndSave(plugin.id);
@@ -104,7 +104,7 @@ const Commands = (app: App, manager: Manager) => {
             manager.settings.GROUPS.forEach((group) => {
                 manager.addCommand({
                     id: `manager-${group.id}-enabled`,
-                    name: `一键开启${group.name}分组`,
+                    name: `${manager.translator.t('命令行_一键启用_文本')} ${group.name} ${manager.translator.t('命令行_分组_文本')}`,
                     callback: async () => {
                         const filteredPlugins = manager.settings.Plugins.filter(plugin => plugin.group === group.id);
                         filteredPlugins.forEach(async plugin => { await manager.appPlugins.enablePluginAndSave(plugin.id); });
@@ -113,7 +113,7 @@ const Commands = (app: App, manager: Manager) => {
                 });
                 manager.addCommand({
                     id: `manager-${group.id}-disable`,
-                    name: `一键禁用${group.name}分组`,
+                    name: `${manager.translator.t('命令行_一键禁用_文本')} ${group.name} ${manager.translator.t('命令行_分组_文本')}`,
                     callback: async () => {
                         const filteredPlugins = manager.settings.Plugins.filter(plugin => plugin.group === group.id);
                         filteredPlugins.forEach(async plugin => { await manager.appPlugins.disablePluginAndSave(plugin.id); });

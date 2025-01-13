@@ -15,6 +15,7 @@ export default class ManagerBasis extends BaseSetting {
             this.settings.LANGUAGE = value;
             this.manager.saveSettings();
             this.settingTab.basisDisplay();
+            Commands(this.app, this.manager); 
         });
 
         const itemStyleBar = new Setting(this.containerEl)
