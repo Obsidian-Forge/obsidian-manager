@@ -19,7 +19,7 @@ body.theme-dark {
     display: none;
 }
 
-.manager-display-block{
+.manager-display-block {
     display: block;
 }
 
@@ -144,7 +144,7 @@ body.theme-dark {
     margin-right: 5px;
 }
 
-.manager-item__name-delay{
+.manager-item__name-delay {
     font-weight: bold;
     color: var(--interactive-accent);
 }
@@ -158,6 +158,8 @@ body.theme-dark {
     margin-left: 0px;
     transition: opacity 3s ease-out;
 }
+
+
 
 .manager-editor__container {
     display: flex;
@@ -183,7 +185,7 @@ body.theme-dark {
     display: flex;
     align-items: center;
     height: 100%;
-    padding: 6px 0px;
+    padding: 6px 3px;
     border: #fff solid 0px;
     border-radius: var(--i18n-border-radius);
 }
@@ -196,6 +198,9 @@ body.theme-dark {
     background-color: var(--i18n-background-modifier-hover);
 }
 
+.manager-editor__item-input {
+    width: 100px;
+}
 
 /* 设置界面CSS */
 .manager-setting__container {
@@ -294,4 +299,8 @@ body.theme-dark {
 
 .manager-delete__action {
     padding-bottom: 0px;
+}
+
+.manager-food {
+    margin-top: 10px;
 }

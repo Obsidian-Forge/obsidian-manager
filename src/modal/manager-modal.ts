@@ -35,6 +35,8 @@ export class ManagerModal extends Modal {
     searchText = '';
     // 编辑模式
     editorMode = false;
+    // 未分组
+    noGroup = false;
     // 仅启用
     onlyEnabled = false;
     // 测试模式
@@ -195,6 +197,14 @@ export class ManagerModal extends Modal {
         // [搜索行] 
         const searchBar = new Setting(this.titleEl).setClass('manager-bar__search').setName(this.manager.translator.t('通用_搜索_文本'));
 
+        // [搜索行] 未分组
+        const noGroupBar = new ButtonComponent(searchBar.controlEl).setIcon('group');
+        noGroupBar.setTooltip(this.manager.translator.t('管理器_未分组_描述'));
+        noGroupBar.onClick(() => {
+            this.noGroup = !this.noGroup;
+            this.reloadShowData();
+        });
+
         // [搜索行] 仅启用
         const onlyEnabled = new ButtonComponent(searchBar.controlEl);
         this.onlyEnabled ? onlyEnabled.setIcon('toggle-right') : onlyEnabled.setIcon('toggle-left');
@@ -260,6 +270,8 @@ export class ManagerModal extends Modal {
             if (ManagerPlugin) {
                 // [搜索] 仅启用
                 if (this.onlyEnabled && !isEnabled) continue;
+                // [搜索] 未分组
+                if (this.noGroup && !(ManagerPlugin.group == '')) continue;
                 // [搜索] 分组
                 if (this.group !== '' && ManagerPlugin.group !== this.group) continue;
                 // [搜索] 标签
@@ -510,7 +522,7 @@ export class ManagerModal extends Modal {
                     });
                     // [编辑] 延迟
                     if (this.settings.DELAY) {
-                        const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = item.name; return acc; }, { '': '无延迟' });
+                        const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = item.name; return acc; }, { '': this.manager.translator.t('通用_无延迟_文本') });
                         const delaysEl = new DropdownComponent(itemEl.controlEl);
                         delaysEl.addOptions(delays);
                         delaysEl.setValue(ManagerPlugin.delay);
