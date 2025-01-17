@@ -64,6 +64,9 @@ export class ManagerModal extends Modal {
         //@ts-ignore
         const modalEl: HTMLElement = this.contentEl.parentElement;
         modalEl.addClass('manager-container');
+        // 靠上
+        if (!this.settings.CENTER) modalEl.addClass('manager-container__top');
+
         modalEl.removeChild(modalEl.getElementsByClassName('modal-close-button')[0]);
         this.titleEl.parentElement?.addClass('manager-container__header');
         this.contentEl.addClass('manager-item-container');

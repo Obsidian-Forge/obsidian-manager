@@ -15,7 +15,17 @@ export default class ManagerBasis extends BaseSetting {
             this.settings.LANGUAGE = value;
             this.manager.saveSettings();
             this.settingTab.basisDisplay();
-            Commands(this.app, this.manager); 
+            Commands(this.app, this.manager);
+        });
+
+        const topBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_界面居中_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_界面居中_描述'));
+        const topToggle = new ToggleComponent(topBar.controlEl);
+        topToggle.setValue(this.settings.CENTER);
+        topToggle.onChange((value) => {
+            this.settings.CENTER = value;
+            this.manager.saveSettings();
         });
 
         const itemStyleBar = new Setting(this.containerEl)

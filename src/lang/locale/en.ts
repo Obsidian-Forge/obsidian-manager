@@ -49,6 +49,8 @@ export default {
 
     设置_基础设置_语言_标题: 'Language Settings',
     设置_基础设置_语言_描述: 'Choose your preferred language.',
+    设置_基础设置_界面居中_标题: 'Center the interface',
+    设置_基础设置_界面居中_描述: 'Set whether the manager interface is centered',
     设置_基础设置_目录样式_标题: 'Directory Style',
     设置_基础设置_目录样式_描述: 'Select the style of the group to enhance the browsing experience.',
     设置_基础设置_分组样式_标题: 'Group Style',

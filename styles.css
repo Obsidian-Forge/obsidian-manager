@@ -63,6 +63,11 @@ body.theme-dark {
     display: none;
 }
 
+.manager-container__top {
+    position: absolute;
+    top: 100px;
+}
+
 .manager-container__header {
     margin-bottom: 0px;
 }

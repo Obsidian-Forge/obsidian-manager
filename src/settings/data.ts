@@ -2,6 +2,7 @@ import { Delay, ManagerPlugin, Tag, Type } from '../data/types';
 
 export interface ManagerSettings {
 	LANGUAGE: string;
+	CENTER: boolean;
 	ITEM_STYLE: string;
 	GROUP_STYLE: string;
 	TAG_STYLE: string;
@@ -17,6 +18,7 @@ export interface ManagerSettings {
 
 export const DEFAULT_SETTINGS: ManagerSettings = {
 	LANGUAGE: "zh-cn",
+	CENTER: false,
 	ITEM_STYLE: "alwaysExpand",
 	GROUP_STYLE: "a",
 	TAG_STYLE: "b",
