@@ -9,6 +9,7 @@ import { GroupModal } from './group-modal';
 import { TagsModal } from './tags-modal';
 import { DeleteModal } from './delete-modal';
 import Commands from 'src/command';
+import { DisableModal } from './disable-modal';
 
 // ==============================
 //          侧边栏 对话框 翻译
@@ -31,19 +32,19 @@ export class ManagerModal extends Modal {
     tag = '';
     // 标签内容
     delay = '';
-    // 搜索内容
-    searchText = '';
-    // 编辑模式
-    editorMode = false;
+
     // 未分组
     noGroup = false;
+    // 搜索内容
+    searchText = '';
     // 仅启用
     onlyEnabled = false;
+    // 编辑模式
+    editorMode = false;
     // 测试模式
     developerMode = false;
 
     searchEl: SearchComponent;
-    // footEl
     footEl: HTMLDivElement;
 
     constructor(app: App, manager: Manager) {
@@ -122,23 +123,25 @@ export class ManagerModal extends Modal {
         disableButton.setIcon('square');
         disableButton.setTooltip(this.manager.translator.t('管理器_一键禁用_描述'));
         disableButton.onClick(async () => {
-            for (const plugin of this.displayPlugins) {
-                if (this.settings.DELAY) {
-                    const ManagerPlugin = this.settings.Plugins.find(p => p.id === plugin.id);
-                    if (ManagerPlugin && ManagerPlugin.enabled) {
-                        await this.appPlugins.disablePlugin(plugin.id);
-                        ManagerPlugin.enabled = false;
-                        this.manager.saveSettings();
-                        this.reloadShowData();
+            new DisableModal(this.app, this.manager, async () => {
+                for (const plugin of this.displayPlugins) {
+                    if (this.settings.DELAY) {
+                        const ManagerPlugin = this.settings.Plugins.find(p => p.id === plugin.id);
+                        if (ManagerPlugin && ManagerPlugin.enabled) {
+                            await this.appPlugins.disablePlugin(plugin.id);
+                            ManagerPlugin.enabled = false;
+                            this.manager.saveSettings();
+                            this.reloadShowData();
+                        }
+                    } else {
+                        if (this.appPlugins.enabledPlugins.has(plugin.id)) {
+                            await this.appPlugins.disablePluginAndSave(plugin.id);
+                            this.reloadShowData();
+                        }
                     }
-                } else {
-                    if (this.appPlugins.enabledPlugins.has(plugin.id)) {
-                        await this.appPlugins.disablePluginAndSave(plugin.id);
-                        this.reloadShowData();
-                    }
+                    Commands(this.app, this.manager);
                 }
-                Commands(this.app, this.manager);
-            }
+            }).open();
         });
 
         // [操作行] 一键启用
@@ -146,23 +149,25 @@ export class ManagerModal extends Modal {
         enableButton.setIcon('square-check')
         enableButton.setTooltip(this.manager.translator.t('管理器_一键启用_描述'))
         enableButton.onClick(async () => {
-            for (const plugin of this.displayPlugins) {
-                if (this.settings.DELAY) {
-                    const ManagerPlugin = this.manager.settings.Plugins.find(mp => mp.id === plugin.id);
-                    if (ManagerPlugin && !ManagerPlugin.enabled) {
-                        await this.appPlugins.enablePlugin(plugin.id);
-                        ManagerPlugin.enabled = true;
-                        this.manager.saveSettings();
-                        this.reloadShowData();
+            new DisableModal(this.app, this.manager, async () => {
+                for (const plugin of this.displayPlugins) {
+                    if (this.settings.DELAY) {
+                        const ManagerPlugin = this.manager.settings.Plugins.find(mp => mp.id === plugin.id);
+                        if (ManagerPlugin && !ManagerPlugin.enabled) {
+                            await this.appPlugins.enablePlugin(plugin.id);
+                            ManagerPlugin.enabled = true;
+                            this.manager.saveSettings();
+                            this.reloadShowData();
+                        }
+                    } else {
+                        if (!this.appPlugins.enabledPlugins.has(plugin.id)) {
+                            await this.appPlugins.enablePluginAndSave(plugin.id);
+                            this.reloadShowData();
+                        }
                     }
-                } else {
-                    if (!this.appPlugins.enabledPlugins.has(plugin.id)) {
-                        await this.appPlugins.enablePluginAndSave(plugin.id);
-                        this.reloadShowData();
-                    }
+                    Commands(this.app, this.manager);
                 }
-                Commands(this.app, this.manager);
-            }
+            }).open();
         });
 
         // [操作行] 编辑模式
@@ -223,9 +228,14 @@ export class ManagerModal extends Modal {
         const groups = this.settings.GROUPS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${groupCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无分组_文本') });
         const groupsDropdown = new DropdownComponent(searchBar.controlEl);
         groupsDropdown.addOptions(groups);
-        groupsDropdown.setValue(this.group !== '' ? this.group : '');
+        groupsDropdown.setValue(this.settings.PERSISTENCE ? this.settings.FILTER_GROUP : this.group);
         groupsDropdown.onChange((value) => {
-            this.group = value;
+            if (this.settings.PERSISTENCE) {
+                this.settings.FILTER_GROUP = value;
+                this.manager.saveSettings();
+            } else {
+                this.group = value;
+            }
             this.reloadShowData();
         });
 
@@ -234,9 +244,14 @@ export class ManagerModal extends Modal {
         const tags = this.settings.TAGS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${tagCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无标签_文本') });
         const tagsDropdown = new DropdownComponent(searchBar.controlEl);
         tagsDropdown.addOptions(tags);
-        tagsDropdown.setValue(this.tag);
+        tagsDropdown.setValue(this.settings.PERSISTENCE ? this.settings.FILTER_TAG : this.tag);
         tagsDropdown.onChange((value) => {
-            this.tag = value;
+            if (this.settings.PERSISTENCE) {
+                this.settings.FILTER_TAG = value;
+                this.manager.saveSettings();
+            } else {
+                this.tag = value;
+            }
             this.reloadShowData();
         });
 
@@ -246,9 +261,14 @@ export class ManagerModal extends Modal {
             const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = `${item.name} (${delayCounts[item.id] || 0})`; return acc; }, { '': this.manager.translator.t('通用_无延迟_文本') });
             const delaysDropdown = new DropdownComponent(searchBar.controlEl);
             delaysDropdown.addOptions(delays);
-            delaysDropdown.setValue(this.delay);
+            delaysDropdown.setValue(this.settings.PERSISTENCE ? this.settings.FILTER_DELAY : this.delay);
             delaysDropdown.onChange((value) => {
-                this.delay = value;
+                if (this.settings.PERSISTENCE) {
+                    this.settings.FILTER_DELAY = value;
+                    this.manager.saveSettings();
+                } else {
+                    this.delay = value;
+                }
                 this.reloadShowData();
             });
         }
@@ -273,14 +293,24 @@ export class ManagerModal extends Modal {
             if (ManagerPlugin) {
                 // [搜索] 仅启用
                 if (this.onlyEnabled && !isEnabled) continue;
+
                 // [搜索] 未分组
                 if (this.noGroup && !(ManagerPlugin.group == '')) continue;
-                // [搜索] 分组
-                if (this.group !== '' && ManagerPlugin.group !== this.group) continue;
-                // [搜索] 标签
-                if (this.tag !== '' && !(ManagerPlugin.tags.includes(this.tag))) continue;
-                // [搜索] 标签
-                if (this.delay !== '' && ManagerPlugin.delay !== this.delay) continue;
+                if (this.settings.PERSISTENCE) {
+                    // [搜索] 分组
+                    if (this.settings.FILTER_GROUP !== '' && ManagerPlugin.group !== this.settings.FILTER_GROUP) continue;
+                    // [搜索] 标签
+                    if (this.settings.FILTER_TAG !== '' && !(ManagerPlugin.tags.includes(this.settings.FILTER_TAG))) continue;
+                    // [搜索] 标签
+                    if (this.settings.FILTER_DELAY !== '' && ManagerPlugin.delay !== this.settings.FILTER_DELAY) continue;
+                } else {
+                    // [搜索] 分组
+                    if (this.group !== '' && ManagerPlugin.group !== this.group) continue;
+                    // [搜索] 标签
+                    if (this.tag !== '' && !(ManagerPlugin.tags.includes(this.tag))) continue;
+                    // [搜索] 标签
+                    if (this.delay !== '' && ManagerPlugin.delay !== this.delay) continue;
+                }
                 // [搜索] 标题
                 if (this.searchText !== '' &&
                     ManagerPlugin.name.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1 &&

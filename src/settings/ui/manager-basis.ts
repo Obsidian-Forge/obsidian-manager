@@ -1,9 +1,29 @@
 import BaseSetting from "../base-setting";
 import { DropdownComponent, Setting, ToggleComponent } from "obsidian";
 import Commands from "src/command";
-import { GROUP_STYLE, ITEM_STYLE, TAG_STYLE } from "src/data/data";
+// import { GROUP_STYLE, ITEM_STYLE, TAG_STYLE } from "src/data/data";
 
 export default class ManagerBasis extends BaseSetting {
+    private ITEM_STYLE = {
+        'alwaysExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
+        'neverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
+        'hoverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
+        'clickExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
+    }
+    private GROUP_STYLE = {
+        'a': this.manager.translator.t('设置_基础设置_分组样式_选项_一'),
+        'b': this.manager.translator.t('设置_基础设置_分组样式_选项_二'),
+        'c': this.manager.translator.t('设置_基础设置_分组样式_选项_三'),
+        'd': this.manager.translator.t('设置_基础设置_分组样式_选项_四')
+    }
+    private TAG_STYLE = {
+        'a': this.manager.translator.t('设置_基础设置_标签样式_选项_一'),
+        'b': this.manager.translator.t('设置_基础设置_标签样式_选项_二'),
+        'c': this.manager.translator.t('设置_基础设置_标签样式_选项_三'),
+        'd': this.manager.translator.t('设置_基础设置_标签样式_选项_四')
+    }
+
+
     main(): void {
         const languageBar = new Setting(this.containerEl)
             .setName(this.manager.translator.t('设置_基础设置_语言_标题'))
@@ -28,11 +48,23 @@ export default class ManagerBasis extends BaseSetting {
             this.manager.saveSettings();
         });
 
+        // 
+        const persistenceBar = new Setting(this.containerEl)
+            .setName(this.manager.translator.t('设置_基础设置_筛选持久化_标题'))
+            .setDesc(this.manager.translator.t('设置_基础设置_筛选持久化_描述'));
+        const persistenceToggle = new ToggleComponent(persistenceBar.controlEl);
+        persistenceToggle.setValue(this.settings.PERSISTENCE);
+        persistenceToggle.onChange((value) => {
+            this.settings.PERSISTENCE = value;
+            this.manager.saveSettings();
+        });
+
+
         const itemStyleBar = new Setting(this.containerEl)
             .setName(this.manager.translator.t('设置_基础设置_目录样式_标题'))
             .setDesc(this.manager.translator.t('设置_基础设置_目录样式_描述'));
         const itemStyleDropdown = new DropdownComponent(itemStyleBar.controlEl);
-        itemStyleDropdown.addOptions(ITEM_STYLE);
+        itemStyleDropdown.addOptions(this.ITEM_STYLE);
         itemStyleDropdown.setValue(this.settings.ITEM_STYLE);
         itemStyleDropdown.onChange((value) => {
             this.settings.ITEM_STYLE = value;
@@ -43,7 +75,7 @@ export default class ManagerBasis extends BaseSetting {
             .setName(this.manager.translator.t('设置_基础设置_分组样式_标题'))
             .setDesc(this.manager.translator.t('设置_基础设置_分组样式_描述'));
         const groupStyleDropdown = new DropdownComponent(groupStyleBar.controlEl);
-        groupStyleDropdown.addOptions(GROUP_STYLE);
+        groupStyleDropdown.addOptions(this.GROUP_STYLE);
         groupStyleDropdown.setValue(this.settings.GROUP_STYLE);
         groupStyleDropdown.onChange((value) => {
             this.settings.GROUP_STYLE = value;
@@ -54,7 +86,7 @@ export default class ManagerBasis extends BaseSetting {
             .setName(this.manager.translator.t('设置_基础设置_标签样式_标题'))
             .setDesc(this.manager.translator.t('设置_基础设置_标签样式_描述'));
         const tagStyleDropdown = new DropdownComponent(tagStyleBar.controlEl);
-        tagStyleDropdown.addOptions(TAG_STYLE);
+        tagStyleDropdown.addOptions(this.TAG_STYLE);
         tagStyleDropdown.setValue(this.settings.TAG_STYLE);
         tagStyleDropdown.onChange((value) => {
             this.settings.TAG_STYLE = value;

@@ -41,27 +41,51 @@ export default {
     卸载_取消: 'Cancel',
     卸载_通知_一: 'Uninstalled successfully',
 
+    一键_标题: 'One-click Enable/Disable Plugins',
+    一键_提示: 'Are you sure you want to enable/disable the plugins on this page with one click? This action cannot be undone. (Please wait patiently during the enable/disable process)',
+    一键_启禁: 'Enable/Disable',
+    一键_取消: 'Cancel',
+    一键_通知_一: 'Enable/Disable Successful',
+
     设置_基础设置_前缀: 'Basic',
     设置_分组设置_前缀: 'Group',
     设置_标签设置_前缀: 'Tag',
     设置_延迟设置_前缀: 'Delay',
 
-
     设置_基础设置_语言_标题: 'Language Settings',
     设置_基础设置_语言_描述: 'Choose your preferred language.',
     设置_基础设置_界面居中_标题: 'Center the interface',
     设置_基础设置_界面居中_描述: 'Set whether the manager interface is centered',
+
     设置_基础设置_目录样式_标题: 'Directory Style',
     设置_基础设置_目录样式_描述: 'Select the style of the group to enhance the browsing experience.',
+    设置_基础设置_目录样式_选项_一: 'Always Expanded',
+    设置_基础设置_目录样式_选项_二: 'Never Expanded',
+    设置_基础设置_目录样式_选项_三: 'Hover to Expand',
+    设置_基础设置_目录样式_选项_四: 'Click to Expand',
+
     设置_基础设置_分组样式_标题: 'Group Style',
     设置_基础设置_分组样式_描述: 'Select the style of the group to make it more noticeable and easy to identify.',
+    设置_基础设置_分组样式_选项_一: 'Style One',
+    设置_基础设置_分组样式_选项_二: 'Style Two',
+    设置_基础设置_分组样式_选项_三: 'Style Three',
+    设置_基础设置_分组样式_选项_四: 'Style Four',
+
     设置_基础设置_标签样式_标题: 'Tag Style',
     设置_基础设置_标签样式_描述: 'Select the style of the tag to make it more noticeable and easy to identify.',
+    设置_基础设置_标签样式_选项_一: 'Style One',
+    设置_基础设置_标签样式_选项_二: 'Style Two',
+    设置_基础设置_标签样式_选项_三: 'Style Three',
+    设置_基础设置_标签样式_选项_四: 'Style Four',
 
     设置_基础设置_延时启动_标题: 'Delayed Startup',
     设置_基础设置_延时启动_描述: 'Enabling the delayed startup feature can optimize the loading order, but please note that this may cause compatibility issues with some plugins.',
     设置_基础设置_淡化插件_标题: 'Fade Plugins',
     设置_基础设置_淡化插件_描述: 'Provide a visual fade effect for disabled plugins to clearly distinguish between enabled and disabled plugins.',
+
+    设置_基础设置_筛选持久化_标题: 'Filter Persistence',
+    设置_基础设置_筛选持久化_描述: 'After enabling, you will see the same plugin list every time you open the manager.',
+
     设置_基础设置_单独命令_标题: 'Control Plugin Commands Separately',
     设置_基础设置_单独命令_描述: 'Enable this option to control the enabled and disabled state of each plugin separately. (Restart Obsidian to take effect)',
     设置_基础设置_分组命令_标题: 'Control Plugin Commands by Group',
