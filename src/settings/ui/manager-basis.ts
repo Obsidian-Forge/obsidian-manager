@@ -6,14 +6,14 @@ import Commands from "src/command";
 export default class ManagerBasis extends BaseSetting {
     private ITEM_STYLE = {
         'alwaysExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
-        'neverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
-        'hoverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
-        'clickExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_一'),
+        'neverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_二'),
+        'hoverExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_三'),
+        'clickExpand': this.manager.translator.t('设置_基础设置_目录样式_选项_四'),
     }
     private GROUP_STYLE = {
         'a': this.manager.translator.t('设置_基础设置_分组样式_选项_一'),
         'b': this.manager.translator.t('设置_基础设置_分组样式_选项_二'),
-        'c': this.manager.translator.t('设置_基础设置_分组样式_选项_三'),
+        'c': this.manager.translator.t('设置_基础设置_分组样式_选项_三'), 
         'd': this.manager.translator.t('设置_基础设置_分组样式_选项_四')
     }
     private TAG_STYLE = {
