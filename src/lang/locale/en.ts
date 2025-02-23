@@ -19,6 +19,10 @@ export default {
     命令行_一键启用_文本: 'One - click Enable',
     命令行_一键禁用_文本: 'One - click Disable',
 
+    菜单_笔记_标题:'Note',
+    菜单_快捷键_标题:'Hotkeys',
+    菜单_GitHub_标题:'GitHub',
+
     管理器_GITHUB_描述: 'Visit the author\'s GitHub page to view project details, update logs, participate in discussions, and contribute code.',
     管理器_视频教程_描述: 'Access video tutorials',
     管理器_编辑模式_描述: 'Enable edit mode for in-depth plugin configuration customization',

@@ -28,30 +28,6 @@ export default class Manager extends Plugin {
         this.addSettingTab(new ManagerSettingTab(this.app, this));
         this.settings.DELAY ? this.enableDelay() : this.disableDelay();
         Commands(this.app, this);
-
-        // this.registerEvent(
-        //     this.app.workspace.on('file-menu', (menu, file) => {
-        //         const addIconMenuItem = (item: MenuItem) => {
-        //             item.setTitle('增');
-        //             item.setIcon('hashtag');
-        //             item.onClick(async () => {
-        //                 console.log(file)
-        //             });
-        //         };
-        //         menu.addItem(addIconMenuItem);
-        //         const addIconMenuItem1 = (item: MenuItem) => {
-        //             item.setTitle('删');
-        //             item.setIcon('hashtag');
-        //         };
-        //         menu.addItem(addIconMenuItem1);
-        //         const addIconMenuItem2 = (item: MenuItem) => {
-        //             item.setTitle('改');
-        //             item.setIcon('hashtag');
-        //         };
-        //         menu.addItem(addIconMenuItem2);
-        //     }),
-        // );
-
     }
 
     public async onunload() {

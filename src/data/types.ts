@@ -6,6 +6,7 @@ export interface ManagerPlugin {
 	tags: string[];
 	enabled: boolean;
 	delay: string;
+	note:string;
 }
 
 export interface Type {
