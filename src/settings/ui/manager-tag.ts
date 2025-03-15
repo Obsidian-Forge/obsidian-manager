@@ -46,7 +46,7 @@ export default class ManagerTag extends BaseSetting {
         this.manager.settings.TAGS.forEach((tag, index) => {
             const item = new Setting(this.containerEl)
             item.setClass('manager-setting-tag__item')
-            item.setName(`${index + 1}. `)
+            // item.setName(`${index + 1}. `)
             item.addColorPicker(cb => cb
                 .setValue(tag.color)
                 .onChange((value) => {
@@ -80,7 +80,7 @@ export default class ManagerTag extends BaseSetting {
             )
             const tagEl = this.manager.createTag(tag.name, tag.color, this.settings.TAG_STYLE);
             item.nameEl.appendChild(tagEl);
-            item.nameEl.appendText(` (${tag.id})`);
+            item.nameEl.appendText(` [${tag.id}]`);
         });
 
     }

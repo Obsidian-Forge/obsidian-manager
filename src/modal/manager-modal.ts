@@ -494,7 +494,6 @@ export class ManagerModal extends Modal {
 				// [右键操作]
 				itemEl.settingEl.addEventListener("contextmenu", (event) => {
 					event.preventDefault(); // 阻止默认的右键菜单
-
 					const menu = new Menu();
 					menu.addSeparator();
 					menu.addItem((item) =>
@@ -538,6 +537,16 @@ export class ManagerModal extends Modal {
 										path.join(plugin.authorUrl, plugin.id)
 									);
 								}
+							})
+					);
+					menu.addItem((item) =>
+						item
+							.setTitle("单次启动")
+							.setIcon("repeat-1")
+							.setDisabled(isEnabled)
+							.onClick(async () => {
+								new Notice("开启中，请稍等");
+								await this.appPlugins.enablePlugin(plugin.id);
 							})
 					);
 

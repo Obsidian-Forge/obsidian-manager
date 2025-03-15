@@ -49,7 +49,7 @@ export default class ManagerGroup extends BaseSetting {
         this.manager.settings.GROUPS.forEach((group, index) => {
             const item = new Setting(this.containerEl)
             item.settingEl.addClass('manager-setting-group__item')
-            item.setName(`${index + 1}. `)
+            // item.setName(`${index + 1}. `)
             item.addColorPicker(cb => cb
                 .setValue(group.color)
                 .onChange((value) => {
@@ -84,7 +84,7 @@ export default class ManagerGroup extends BaseSetting {
             )
             const tagEl = this.manager.createTag(group.name, group.color, this.settings.GROUP_STYLE);
             item.nameEl.appendChild(tagEl);
-            item.nameEl.appendText(` (${group.id})`);
+            item.nameEl.appendText(` [${group.id}]`);
         });
     }
 }

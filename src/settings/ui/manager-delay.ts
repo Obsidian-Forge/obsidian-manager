@@ -46,7 +46,7 @@ export default class ManagerDelay extends BaseSetting {
         this.manager.settings.DELAYS.forEach((delay, index) => {
             const item = new Setting(this.containerEl)
             item.settingEl.addClass('manager-setting-group__item')
-            item.setName(`${index + 1}. ${delay.id}`)
+            item.setName(`[${delay.id}]`)
             item.addSlider(cb => cb
                 .setLimits(0, 100, 1)
                 .setValue(delay.time)
@@ -78,6 +78,5 @@ export default class ManagerDelay extends BaseSetting {
                 })
             )
         });
-
     }
 }
