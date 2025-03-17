@@ -128,6 +128,7 @@ export default class Manager extends Plugin {
                     'tags': [],
                     'enabled': isEnabled,
                     'delay': '',
+                    'note': ''
                 });
             }
         });

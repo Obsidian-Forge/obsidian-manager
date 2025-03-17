@@ -12,6 +12,8 @@ export default {
     通用_总计_文本: 'Total',
     通用_启用_文本: 'Enable',
     通用_禁用_文本: 'Disable',
+    通用_关闭_文本: 'Disable',
+    通用_开启_文本: 'Enable',
 
     命令行_启用_文本: 'Enable',
     命令行_禁用_文本: 'Disable',

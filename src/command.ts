@@ -24,7 +24,7 @@ const Commands = (app: App, manager: Manager) => {
                 if (mp) {
                     manager.addCommand({
                         id: `manager-${mp.id}`,
-                        name: `${mp.enabled ? '关闭' : '开启'} ${mp.name} `,
+                        name: `${mp.enabled ? manager.translator.t('通用_关闭_文本') : manager.translator.t('通用_开启_文本')} ${mp.name} `,
                         callback: async () => {
                             if (mp.enabled) {
                                 mp.enabled = false;
@@ -47,7 +47,7 @@ const Commands = (app: App, manager: Manager) => {
             manager.settings.GROUPS.forEach((group) => {
                 manager.addCommand({
                     id: `manager-${group.id}-enabled`,
-                    name: `一键开启${group.name}分组`,
+                    name: `${manager.translator.t('命令行_一键启用_文本')} ${group.name}`,
                     callback: async () => {
                         const filteredPlugins = manager.settings.Plugins.filter(plugin => plugin.group === group.id);
                         filteredPlugins.forEach(async plugin => {
@@ -62,7 +62,7 @@ const Commands = (app: App, manager: Manager) => {
                 });
                 manager.addCommand({
                     id: `manager-${group.id}-disable`,
-                    name: `一键禁用${group.name}分组`,
+                    name: `${manager.translator.t('命令行_一键禁用_文本')} ${group.name}`,
                     callback: async () => {
                         const filteredPlugins = manager.settings.Plugins.filter(plugin => plugin.group === group.id);
                         filteredPlugins.forEach(async plugin => {
