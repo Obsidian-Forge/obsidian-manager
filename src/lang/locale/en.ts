@@ -24,6 +24,8 @@ export default {
     菜单_笔记_标题:'Note',
     菜单_快捷键_标题:'Hotkeys',
     菜单_GitHub_标题:'GitHub',
+    菜单_单次启动_描述: 'Single start',
+    菜单_重启插件_描述: 'Restart plugin',
 
     管理器_GITHUB_描述: 'Visit the author\'s GitHub page to view project details, update logs, participate in discussions, and contribute code.',
     管理器_视频教程_描述: 'Access video tutorials',
@@ -54,6 +56,7 @@ export default {
     一键_通知_一: 'Enable/Disable Successful',
 
     设置_基础设置_前缀: 'Basic',
+    设置_样式设置_前缀: 'Style',
     设置_分组设置_前缀: 'Group',
     设置_标签设置_前缀: 'Tag',
     设置_延迟设置_前缀: 'Delay',

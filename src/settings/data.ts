@@ -1,21 +1,35 @@
 import { Delay, ManagerPlugin, Tag, Type } from '../data/types';
 
 export interface ManagerSettings {
-	// 筛选
+	// 持久化
 	PERSISTENCE: boolean;
+    // 过滤标签
 	FILTER_TAG: string;
+    // 过滤分组
 	FILTER_GROUP: string;
+    // 过滤延迟
 	FILTER_DELAY: string;
 
+	// 语言
 	LANGUAGE: string;
+	// 居中
 	CENTER: boolean;
+    // 样式
 	ITEM_STYLE: string;
+    // 分组样式
 	GROUP_STYLE: string;
+    // 标签样式
 	TAG_STYLE: string;
+    
+    // 延迟
 	DELAY: boolean;
+    // 淡出样式
 	FADE_OUT_DISABLED_PLUGINS: boolean;
+    // 命令项
 	COMMAND_ITEM: boolean;
+    // 命令组
 	COMMAND_GROUP: boolean;
+
 	GROUPS: Type[];
 	TAGS: Tag[];
 	DELAYS: Delay[];

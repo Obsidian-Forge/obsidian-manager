@@ -1,9 +1,10 @@
-import { Plugin, PluginManifest, Workspace } from 'obsidian';
+import { ObsidianProtocolData, Plugin, PluginManifest, Workspace } from 'obsidian';
 import { DEFAULT_SETTINGS, ManagerSettings } from './settings/data';
 import { ManagerSettingTab } from './settings';
 import { Translator } from './lang/inxdex';
 import { ManagerModal } from './modal/manager-modal';
 import Commands from './command';
+import Agreement from 'src/agreement';
 
 export default class Manager extends Plugin {
     public settings: ManagerSettings;
@@ -12,6 +13,8 @@ export default class Manager extends Plugin {
     public appPlugins: any;
     public appWorkspace: Workspace;
     public translator: Translator;
+
+    public agreement: Agreement;
 
     public async onload() {
         // @ts-ignore
@@ -28,6 +31,15 @@ export default class Manager extends Plugin {
         this.addSettingTab(new ManagerSettingTab(this.app, this));
         this.settings.DELAY ? this.enableDelay() : this.disableDelay();
         Commands(this.app, this);
+
+        this.agreement = new Agreement(this);
+
+        this.registerObsidianProtocolHandler("BPM-plugin-install", async (params: ObsidianProtocolData) => {
+            await this.agreement.parsePluginInstall(params);
+        });
+        this.registerObsidianProtocolHandler("BPM-plugin-github", async (params: ObsidianProtocolData) => {
+            await this.agreement.parsePluginGithub(params);
+        });
     }
 
     public async onunload() {
@@ -36,8 +48,6 @@ export default class Manager extends Plugin {
 
     public async loadSettings() { this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()); }
     public async saveSettings() { await this.saveData(this.settings); }
-
-
 
     // 关闭延时 调用
     public disableDelay() {
@@ -60,6 +70,7 @@ export default class Manager extends Plugin {
         const plugins = Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manifest.id) as PluginManifest[];
         // 同步插件
         this.synchronizePlugins(plugins);
+
         plugins.forEach(async (plugin: PluginManifest) => {
             // 插件状态
             const isEnabled = this.appPlugins.enabledPlugins.has(plugin.id);
@@ -103,9 +114,7 @@ export default class Manager extends Plugin {
         if (plugin && plugin.enabled) {
             const delay = this.settings.DELAYS.find(item => item.id === plugin.delay);
             const time = delay ? delay.time : 0;
-            setTimeout(() => {
-                this.appPlugins.enablePlugin(id);
-            }, time * 1000);
+            setTimeout(() => { this.appPlugins.enablePlugin(id); }, time * 1000);
         }
     }
 

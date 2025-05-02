@@ -47,10 +47,8 @@ export class DeleteModal extends Modal {
             })
         );
         actionBar.addButton(cb => cb
-            .setButtonText(this.manager.translator.t('卸载_取消')) 
-            .onClick(() => {
-                this.close();
-            })
+            .setButtonText(this.manager.translator.t('卸载_取消'))
+            .onClick(() => { this.close(); })
         );
     }
 
