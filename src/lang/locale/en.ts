@@ -21,11 +21,20 @@ export default {
     命令行_一键启用_文本: 'One - click Enable',
     命令行_一键禁用_文本: 'One - click Disable',
 
-    菜单_笔记_标题:'Note',
-    菜单_快捷键_标题:'Hotkeys',
-    菜单_GitHub_标题:'GitHub',
+    菜单_笔记_标题: 'Note',
+    菜单_快捷键_标题: 'Hotkeys',
+    菜单_GitHub_标题: 'GitHub',
     菜单_单次启动_描述: 'Single start',
     菜单_重启插件_描述: 'Restart plugin',
+
+    筛选_全部_描述: 'All',
+    筛选_仅启用_描述: 'Enabled only',
+    筛选_仅禁用_描述: 'Disabled only',
+    筛选_已分组_描述: 'Grouped',
+    筛选_未分组_描述: 'Ungrouped',
+    筛选_有标签_描述: 'With tags',
+    筛选_无标签_描述: 'Without tags',
+    筛选_有笔记_描述: 'With notes',
 
     管理器_GITHUB_描述: 'Visit the author\'s GitHub page to view project details, update logs, participate in discussions, and contribute code.',
     管理器_视频教程_描述: 'Access video tutorials',

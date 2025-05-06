@@ -10,6 +10,7 @@ import {
     PluginManifest,
     requestUrl,
     SearchComponent,
+    setIcon,
     Setting,
     ToggleComponent,
 } from "obsidian";
@@ -25,6 +26,10 @@ import Commands from "src/command";
 import { DisableModal } from "./disable-modal";
 import { NoteModal } from "./note-modal";
 import { ShareModal } from "./share-modal";
+import { HideModal } from "./hide-modal";
+import { ShareTModal } from "./share-t-modal";
+
+
 
 // ==============================
 //          侧边栏 对话框 翻译
@@ -41,8 +46,7 @@ export class ManagerModal extends Modal {
     // [本地][变量] 展示插件列表
     displayPlugins: PluginManifest[] = [];
 
-    // [本地][变量] 社区插件列表
-    communityPlugins: any[] | undefined = undefined;
+    allPlugins: PluginManifest[] = [];
 
     // 过滤器
     filter = "";
@@ -66,7 +70,7 @@ export class ManagerModal extends Modal {
 
     constructor(app: App, manager: Manager) {
         super(app);
-        // @ts-ignore
+        // @ts-ignore 
         this.appSetting = this.app.setting;
         // @ts-ignore
         this.appPlugins = this.app.plugins;
@@ -139,9 +143,7 @@ export class ManagerModal extends Modal {
         // 靠上
         if (!this.settings.CENTER) modalEl.addClass("manager-container__top");
 
-        modalEl.removeChild(
-            modalEl.getElementsByClassName("modal-close-button")[0]
-        );
+        modalEl.removeChild(modalEl.getElementsByClassName("modal-close-button")[0]);
         this.titleEl.parentElement?.addClass("manager-container__header");
         this.contentEl.addClass("manager-item-container");
         // 添加页尾
@@ -150,24 +152,77 @@ export class ManagerModal extends Modal {
         this.modalEl.appendChild(this.footEl);
 
         // [操作行]
-        const actionBar = new Setting(this.titleEl)
-            .setClass("manager-bar__action")
-            .setName(this.manager.translator.t("通用_操作_文本"));
+        const actionBar = new Setting(this.titleEl).setClass("manager-bar__action").setName(this.manager.translator.t("通用_操作_文本"));
 
         // [操作行] Github
         const githubButton = new ButtonComponent(actionBar.controlEl);
         githubButton.setIcon("github");
-        githubButton.setTooltip(
-            this.manager.translator.t("管理器_GITHUB_描述")
-        );
-        githubButton.onClick(() => {
-            window.open(this.manager.manifest.authorUrl);
-        });
+        githubButton.setTooltip(this.manager.translator.t("管理器_GITHUB_描述"));
+        githubButton.onClick(() => { window.open(this.manager.manifest.authorUrl) });
         // [操作行] Github
         const tutorialButton = new ButtonComponent(actionBar.controlEl);
         tutorialButton.setIcon("book-open");
         tutorialButton.setTooltip(this.manager.translator.t("管理器_视频教程_描述"));
         tutorialButton.onClick(() => { window.open("https://www.bilibili.com/video/BV1WyrkYMEce/"); });
+
+        // [操作行] 检查更新
+        const updateButton = new ButtonComponent(actionBar.controlEl);
+        updateButton.setIcon("rss");
+        updateButton.setTooltip(this.manager.translator.t("管理器_检查更新_描述"));
+        updateButton.onClick(async () => {
+            try {
+                const result = await this.appPlugins.checkForUpdates();
+                this.appSetting.open();
+                this.appSetting.openTabById("community-plugins");
+            } catch (error) {
+                console.error("检查更新时出错:", error); // 处理可能出现的错误
+            }
+        });
+
+        // [操作行] 插件分享
+        // const shareButton = new ButtonComponent(actionBar.controlEl);
+        // shareButton.setIcon("external-link");
+        // // shareButton.setTooltip(this.manager.translator.t("管理器_插件分享_描述"));
+        // shareButton.onClick(async () => {
+        //     new ShareTModal(this.app, this.manager, (type: string, url?: string) => {
+        //         if (type == 'import') {
+        //             const plugins = this.displayPlugins.map(plugin => ({
+        //                 id: plugin.id,
+        //                 name: plugin.name,
+        //                 version: plugin.version,
+        //                 author: plugin.author,
+        //                 description: plugin.description,
+        //                 enabled: this.appPlugins.enabledPlugins.has(plugin.id),
+        //                 export: true,
+        //             }));
+
+        //             // 添加管理器自身信息
+        //             plugins.push({
+        //                 id: this.manager.manifest.id,
+        //                 name: this.manager.manifest.name,
+        //                 version: this.manager.manifest.version,
+        //                 author: this.manager.manifest.author,
+        //                 description: this.manager.manifest.description,
+        //                 enabled: this.appPlugins.enabledPlugins.has(this.manager.manifest.id),
+        //                 export: true,
+        //             });
+
+        //             console.log("当前插件详细信息:", plugins);
+
+        //             // new ShareModal(this.app, this.manager, plugins).open();
+        //         }
+        //     }).open();
+        //     // new Notice('功能未完成，敬请期待！');
+        // })
+
+        // [操作行] 插件隐藏
+        const hideButton = new ButtonComponent(actionBar.controlEl);
+        hideButton.setIcon("eye-off");
+        hideButton.onClick(async () => {
+            const plugins: PluginManifest[] = Object.values(this.appPlugins.manifests);
+            plugins.sort((item1, item2) => { return item1.name.localeCompare(item2.name); });
+            new HideModal(this.app, this.manager, this, plugins).open();
+        })
 
         // [操作行] 重载插件
         const reloadButton = new ButtonComponent(actionBar.controlEl);
@@ -187,9 +242,7 @@ export class ManagerModal extends Modal {
             new DisableModal(this.app, this.manager, async () => {
                 for (const plugin of this.displayPlugins) {
                     if (this.settings.DELAY) {
-                        const ManagerPlugin = this.settings.Plugins.find(
-                            (p) => p.id === plugin.id
-                        );
+                        const ManagerPlugin = this.settings.Plugins.find((p) => p.id === plugin.id);
                         if (ManagerPlugin && ManagerPlugin.enabled) {
                             await this.appPlugins.disablePlugin(plugin.id);
                             ManagerPlugin.enabled = false;
@@ -215,10 +268,7 @@ export class ManagerModal extends Modal {
             new DisableModal(this.app, this.manager, async () => {
                 for (const plugin of this.displayPlugins) {
                     if (this.settings.DELAY) {
-                        const ManagerPlugin =
-                            this.manager.settings.Plugins.find(
-                                (mp) => mp.id === plugin.id
-                            );
+                        const ManagerPlugin = this.manager.settings.Plugins.find((mp) => mp.id === plugin.id);
                         if (ManagerPlugin && !ManagerPlugin.enabled) {
                             await this.appPlugins.enablePlugin(plugin.id);
                             ManagerPlugin.enabled = true;
@@ -227,9 +277,7 @@ export class ManagerModal extends Modal {
                         }
                     } else {
                         if (!this.appPlugins.enabledPlugins.has(plugin.id)) {
-                            await this.appPlugins.enablePluginAndSave(
-                                plugin.id
-                            );
+                            await this.appPlugins.enablePluginAndSave(plugin.id);
                             this.reloadShowData();
                         }
                     }
@@ -237,53 +285,6 @@ export class ManagerModal extends Modal {
                 }
             }).open();
         });
-
-        // [操作行] 检查更新
-        const updateButton = new ButtonComponent(actionBar.controlEl);
-        updateButton.setIcon("rss");
-        updateButton.setTooltip(this.manager.translator.t("管理器_检查更新_描述"));
-        updateButton.onClick(async () => {
-            try {
-                await this.appPlugins.checkForUpdates();
-                this.appSetting.open();
-                this.appSetting.openTabById("community-plugins");
-            } catch (error) {
-                console.error("检查更新时出错:", error); // 处理可能出现的错误
-            }
-        });
-
-        // [操作行] 插件分享
-        const shareButton = new ButtonComponent(actionBar.controlEl);
-        shareButton.setIcon("external-link");
-        // shareButton.setTooltip(this.manager.translator.t("管理器_插件分享_描述"));
-        shareButton.onClick(async () => {
-
-            // const plugins = this.displayPlugins.map(plugin => ({
-            //     id: plugin.id,
-            //     name: plugin.name,
-            //     version: plugin.version,
-            //     author: plugin.author,
-            //     description: plugin.description,
-            //     enabled: this.appPlugins.enabledPlugins.has(plugin.id),
-            //     installed: true
-            // }));
-
-            // // 添加管理器自身信息
-            // plugins.push({
-            //     id: this.manager.manifest.id,
-            //     name: this.manager.manifest.name,
-            //     version: this.manager.manifest.version,
-            //     author: this.manager.manifest.author,
-            //     description: this.manager.manifest.description,
-            //     enabled: this.appPlugins.enabledPlugins.has(this.manager.manifest.id),
-            //     installed: true
-            // });
-
-            // console.log("当前插件详细信息:", plugins);
-
-            // new ShareModal(this.app, this.manager, plugins).open();
-            new Notice('功能未完成，敬请期待！');
-        })
 
         // [操作行] 编辑模式
         const editorButton = new ButtonComponent(actionBar.controlEl);
@@ -324,7 +325,6 @@ export class ManagerModal extends Modal {
             testButton.setIcon("test-tube");
             testButton.setTooltip("测试插件");
             testButton.onClick(async () => {
-                // window.open("obsidian://BPM-plugin-install?id=auto-classifier&enable=true&version=1.1.2");
                 // 获取当前页面所有的插件ID 然后将其转换为列表
             });
         }
@@ -333,14 +333,14 @@ export class ManagerModal extends Modal {
         const searchBar = new Setting(this.titleEl).setClass("manager-bar__search").setName(this.manager.translator.t("通用_搜索_文本"));
 
         const filterOptions = {
-            "all": "全部",
-            "enabled": "仅启用",
-            "disabled": "仅禁用",
-            "grouped": "已分组",
-            "ungrouped": "未分组",
-            "tagged": "有标签",
-            "untagged": "无标签",
-            "noted": "有笔记",
+            "all": this.manager.translator.t("筛选_全部_描述"),
+            "enabled": this.manager.translator.t("筛选_仅启用_描述"),
+            "disabled": this.manager.translator.t("筛选_仅禁用_描述"),
+            "grouped": this.manager.translator.t("筛选_已分组_描述"),
+            "ungrouped": this.manager.translator.t("筛选_未分组_描述"),
+            "tagged": this.manager.translator.t("筛选_有标签_描述"),
+            "untagged": this.manager.translator.t("筛选_无标签_描述"),
+            "noted": this.manager.translator.t("筛选_有笔记_描述"),
         };
         // 过滤器
         const filterDropdown = new DropdownComponent(searchBar.controlEl);
@@ -443,8 +443,7 @@ export class ManagerModal extends Modal {
                     default:
                         break; // 其他情况显示所有插件
                 }
-
-                // [搜索] 筛选
+                // [过滤] 筛选
                 if (this.settings.PERSISTENCE) {
                     // [搜索] 分组
                     if (this.settings.FILTER_GROUP !== "" && ManagerPlugin.group !== this.settings.FILTER_GROUP) continue;
@@ -460,9 +459,11 @@ export class ManagerModal extends Modal {
                     // [搜索] 标签
                     if (this.delay !== "" && ManagerPlugin.delay !== this.delay) continue;
                 }
-                // [搜索] 标题
+                // [过滤] 搜索
                 if (this.searchText !== "" && ManagerPlugin.name.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1 && ManagerPlugin.desc.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1 && plugin.author.toLowerCase().indexOf(this.searchText.toLowerCase()) == -1) continue;
-                // [禁用] 自己
+                // [过滤] 隐藏
+                if (this.settings.HIDES.includes(plugin.id)) continue;
+                // [过滤] 自身
                 if (plugin.id === this.manager.manifest.id) continue;
 
                 const itemEl = new Setting(this.contentEl);
@@ -474,39 +475,16 @@ export class ManagerModal extends Modal {
                 itemEl.settingEl.addEventListener("contextmenu", (event) => {
                     event.preventDefault(); // 阻止默认的右键菜单
                     const menu = new Menu();
-                    menu.addSeparator();
-                    menu.addItem((item) =>
-                        item.setTitle(this.manager.translator.t("菜单_笔记_标题"))
-                            .setIcon("notebook-pen")
-                            .onClick(() => {
-                                new NoteModal(
-                                    this.app,
-                                    this.manager,
-                                    ManagerPlugin,
-                                    this
-                                ).open();
-                            })
-                    );
-                    menu.addItem((item) =>
-                        item
-                            .setTitle(
-                                this.manager.translator.t("菜单_快捷键_标题")
-                            )
-                            .setIcon("circle-plus")
-                            .onClick(async () => {
-                                await this.appSetting.open();
-                                await this.appSetting.openTabById("hotkeys");
-                                const tab = await this.appSetting.activeTab;
-                                tab.searchComponent.inputEl.value = plugin.id;
-                                tab.updateHotkeyVisibility();
-                                tab.searchComponent.inputEl.blur();
-                            })
-                    );
+                    // 第一组：插件信息类
+                    // [菜单] GITHUB
                     menu.addItem((item) =>
                         item.setTitle(this.manager.translator.t("菜单_GitHub_标题"))
                             .setIcon("github")
                             .onClick(() => { window.open(`obsidian://BPM-plugin-github?id=${plugin.id}`) })
                     );
+                    menu.addSeparator(); // 分隔符
+                    // 第二组：插件管理类
+                    // [菜单] 单次启动
                     if (!this.settings.DELAY) menu.addItem((item) =>
                         item.setTitle(this.manager.translator.t("菜单_单次启动_描述"))
                             .setIcon("repeat-1")
@@ -518,6 +496,7 @@ export class ManagerModal extends Modal {
 
                             })
                     );
+                    // [菜单] 重启插件
                     if (!this.settings.DELAY) menu.addItem((item) =>
                         item.setTitle(this.manager.translator.t("菜单_重启插件_描述"))
                             .setIcon("refresh-ccw")
@@ -529,6 +508,83 @@ export class ManagerModal extends Modal {
                                 await this.reloadShowData();
                             })
                     );
+                    // [菜单] 隐藏插件
+                    menu.addItem((item) =>
+                        item.setTitle(this.manager.translator.t("菜单_隐藏插件_标题"))
+                            .setIcon("eye-off")
+                            .onClick(() => {
+                                const isHidden = this.settings.HIDES.includes(plugin.id);
+                                if (isHidden) {
+                                    this.settings.HIDES = this.settings.HIDES.filter(id => id !== plugin.id);
+                                } else {
+                                    this.settings.HIDES.push(plugin.id);
+                                }
+                                this.manager.saveSettings();
+                                this.reloadShowData();
+                            })
+                    );
+                    // [菜单] 分享插件
+                    // menu.addItem((item) =>
+                    //     item.setTitle("分享插件_标题")
+                    //         .setIcon("share-2")
+                    //         .onClick(() => {
+                    //             const plugins: PluginManifest[] = Object.values(this.appPlugins.manifests);
+                    //             plugins.sort((item1, item2) => { return item1.name.localeCompare(item2.name); });
+                    //         })
+                    // );
+
+                    menu.addSeparator(); // 分隔符
+                    // 第三组：插件设置类
+                    // [菜单] 插件笔记
+                    menu.addItem((item) =>
+                        item.setTitle(this.manager.translator.t("菜单_笔记_标题")).setIcon("notebook-pen").onClick(() => { new NoteModal(this.app, this.manager, ManagerPlugin, this).open(); })
+                    );
+                    // [菜单] 快捷键
+                    menu.addItem((item) =>
+                        item.setTitle(this.manager.translator.t("菜单_快捷键_标题")).setIcon("circle-plus").onClick(async () => {
+                            await this.appSetting.open();
+                            await this.appSetting.openTabById("hotkeys");
+                            const tab = await this.appSetting.activeTab;
+                            tab.searchComponent.inputEl.value = plugin.id;
+                            tab.updateHotkeyVisibility();
+                            tab.searchComponent.inputEl.blur();
+                        })
+                    );
+                    // [菜单] 复制ID
+                    menu.addItem((item) =>
+                        item.setTitle(this.manager.translator.t("菜单_复制ID_标题"))
+                            .setIcon("copy")
+                            .onClick(() => {
+                                navigator.clipboard.writeText(plugin.id);
+                                new Notice(this.manager.translator.t("通知_ID已复制"));
+                            })
+                    );
+                    // 第三组：测试类
+                    // menu.addSeparator(); // 分隔符
+
+                    // menu.addItem((item) =>
+                    //     item.setTitle("打开市场")
+                    //         .setIcon("store")
+                    //         .onClick(async () => {
+                    //             // await this.app.setting.open();
+                    //             // await this.app.setting.openTabById("community-plugins");
+                    //             // // 可选：自动聚焦搜索框
+                    //             // const tab = await this.app.setting.activeTab;
+                    //             // tab.searchComponent.inputEl.focus();
+
+                    //             await this.appSetting.open();
+                    //             await this.appSetting.openTabById("community-plugins");
+                    //             console.log(this.appSetting);
+                    //             setTimeout(async () => {
+                    //                 const tab = await this.appSetting.activeTab;
+                    //                 const button = tab.containerEl.querySelector('button.mod-cta');
+                    //                 if (button) (button as HTMLElement).click();
+
+                    //             });
+                    //         })
+                    // );
+
+
                     // menu.addSeparator();
                     // menu.addItem((item) =>
                     //     item.setTitle("分组")
@@ -562,23 +618,15 @@ export class ManagerModal extends Modal {
                             itemEl.settingEl.addEventListener(
                                 "mouseenter",
                                 () => {
-                                    itemEl.descEl.removeClass(
-                                        "manager-display-none"
-                                    );
-                                    itemEl.descEl.addClass(
-                                        "manager-display-block"
-                                    );
+                                    itemEl.descEl.removeClass("manager-display-none");
+                                    itemEl.descEl.addClass("manager-display-block");
                                 }
                             );
                             itemEl.settingEl.addEventListener(
                                 "mouseleave",
                                 () => {
-                                    itemEl.descEl.removeClass(
-                                        "manager-display-block"
-                                    );
-                                    itemEl.descEl.addClass(
-                                        "manager-display-none"
-                                    );
+                                    itemEl.descEl.removeClass("manager-display-block");
+                                    itemEl.descEl.addClass("manager-display-none");
                                 }
                             );
                             break;
@@ -618,20 +666,8 @@ export class ManagerModal extends Modal {
                     itemEl.nameEl.appendChild(group);
                     const item = this.settings.GROUPS.find((t) => t.id === ManagerPlugin.group);
                     if (item) {
-                        const tag = this.manager.createTag(
-                            item.name,
-                            item.color,
-                            this.settings.GROUP_STYLE
-                        );
-                        if (this.editorMode)
-                            tag.onclick = () => {
-                                new GroupModal(
-                                    this.app,
-                                    this.manager,
-                                    this,
-                                    ManagerPlugin
-                                ).open();
-                            };
+                        const tag = this.manager.createTag(item.name, item.color, this.settings.GROUP_STYLE);
+                        if (this.editorMode) tag.onclick = () => { new GroupModal(this.app, this.manager, this, ManagerPlugin).open(); };
                         group.appendChild(tag);
                     }
                 }
@@ -665,9 +701,12 @@ export class ManagerModal extends Modal {
                 itemEl.nameEl.appendChild(version);
 
                 // [默认] 笔记图标
-                if (ManagerPlugin.note.length > 0) {
-                    const note = createSpan({ text: "📝" });
+                if (ManagerPlugin.note?.length > 0) {
+                    const note = createSpan();
+                    note.style.cssText = "width:16px; height:16px; display:inline-flex; color: var(--text-accent);";
+                    note.addEventListener("click", () => { new NoteModal(this.app, this.manager, ManagerPlugin, this).open(); });
                     itemEl.nameEl.appendChild(note);
+                    setIcon(note, "notebook-pen");
                 }
 
                 // [默认] 延迟
@@ -728,13 +767,9 @@ export class ManagerModal extends Modal {
                     }
 
                     // [按钮] 打开目录
-                    const openPluginDirButton = new ExtraButtonComponent(
-                        itemEl.controlEl
-                    );
+                    const openPluginDirButton = new ExtraButtonComponent(itemEl.controlEl);
                     openPluginDirButton.setIcon("folder-open");
-                    openPluginDirButton.setTooltip(
-                        this.manager.translator.t("管理器_打开目录_描述")
-                    );
+                    openPluginDirButton.setTooltip(this.manager.translator.t("管理器_打开目录_描述"));
                     openPluginDirButton.onClick(() => {
                         openPluginDirButton.setDisabled(true);
                         managerOpen(pluginDir, this.manager);
@@ -753,15 +788,8 @@ export class ManagerModal extends Modal {
                             // 刷新命令行
                             Commands(this.app, this.manager);
                             // 删除同理
-                            this.manager.synchronizePlugins(
-                                Object.values(this.appPlugins.manifests).filter(
-                                    (pm: PluginManifest) =>
-                                        pm.id !== this.manager.manifest.id
-                                ) as PluginManifest[]
-                            );
-                            new Notice(
-                                this.manager.translator.t("卸载_通知_一")
-                            );
+                            this.manager.synchronizePlugins(Object.values(this.appPlugins.manifests).filter((pm: PluginManifest) => pm.id !== this.manager.manifest.id) as PluginManifest[]);
+                            new Notice(this.manager.translator.t("卸载_通知_一"));
                         }).open();
                     });
 
@@ -772,31 +800,23 @@ export class ManagerModal extends Modal {
                     toggleSwitch.onChange(async () => {
                         if (this.settings.DELAY) {
                             if (toggleSwitch.getValue()) {
-                                if (this.settings.FADE_OUT_DISABLED_PLUGINS)
-                                    itemEl.settingEl.removeClass("inactive"); // [淡化插件]
+                                if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.removeClass("inactive"); // [淡化插件]
                                 ManagerPlugin.enabled = true;
                                 this.manager.saveSettings();
                                 await this.appPlugins.enablePlugin(plugin.id);
                             } else {
-                                if (this.settings.FADE_OUT_DISABLED_PLUGINS)
-                                    itemEl.settingEl.addClass("inactive"); // [淡化插件]
+                                if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass("inactive"); // [淡化插件]
                                 ManagerPlugin.enabled = false;
                                 this.manager.saveSettings();
                                 await this.appPlugins.disablePlugin(plugin.id);
                             }
                         } else {
                             if (toggleSwitch.getValue()) {
-                                if (this.settings.FADE_OUT_DISABLED_PLUGINS)
-                                    itemEl.settingEl.removeClass("inactive"); // [淡化插件]
-                                await this.appPlugins.enablePluginAndSave(
-                                    plugin.id
-                                );
+                                if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.removeClass("inactive"); // [淡化插件]
+                                await this.appPlugins.enablePluginAndSave(plugin.id);
                             } else {
-                                if (this.settings.FADE_OUT_DISABLED_PLUGINS)
-                                    itemEl.settingEl.addClass("inactive"); // [淡化插件]
-                                await this.appPlugins.disablePluginAndSave(
-                                    plugin.id
-                                );
+                                if (this.settings.FADE_OUT_DISABLED_PLUGINS) itemEl.settingEl.addClass("inactive"); // [淡化插件]
+                                await this.appPlugins.disablePluginAndSave(plugin.id);
                             }
                         }
                         Commands(this.app, this.manager);
@@ -806,13 +826,9 @@ export class ManagerModal extends Modal {
                 //
                 if (this.editorMode) {
                     // [按钮] 还原内容
-                    const reloadButton = new ExtraButtonComponent(
-                        itemEl.controlEl
-                    );
+                    const reloadButton = new ExtraButtonComponent(itemEl.controlEl);
                     reloadButton.setIcon("refresh-ccw");
-                    reloadButton.setTooltip(
-                        this.manager.translator.t("管理器_还原内容_描述")
-                    );
+                    reloadButton.setTooltip(this.manager.translator.t("管理器_还原内容_描述"));
                     reloadButton.onClick(() => {
                         ManagerPlugin.name = plugin.name;
                         ManagerPlugin.desc = plugin.description;
@@ -824,20 +840,8 @@ export class ManagerModal extends Modal {
                     });
                     // [编辑] 延迟
                     if (this.settings.DELAY) {
-                        const delays = this.settings.DELAYS.reduce(
-                            (acc: { [key: string]: string }, item) => {
-                                acc[item.id] = item.name;
-                                return acc;
-                            },
-                            {
-                                "": this.manager.translator.t(
-                                    "通用_无延迟_文本"
-                                ),
-                            }
-                        );
-                        const delaysEl = new DropdownComponent(
-                            itemEl.controlEl
-                        );
+                        const delays = this.settings.DELAYS.reduce((acc: { [key: string]: string }, item) => { acc[item.id] = item.name; return acc; }, { "": this.manager.translator.t("通用_无延迟_文本"), });
+                        const delaysEl = new DropdownComponent(itemEl.controlEl);
                         delaysEl.addOptions(delays);
                         delaysEl.setValue(ManagerPlugin.delay);
                         delaysEl.onChange((value) => {

@@ -54,7 +54,7 @@ export class ShareModal extends Modal {
     // 页尾
     footEl: HTMLDivElement;
 
-    constructor(app: App, manager: Manager, plugins: (ImportPluginManifest | ExportPluginManifest)[]) {
+    constructor(app: App, manager: Manager, plugins: (ImportPluginManifest | ExportPluginManifest)[], type: string) {
         super(app);
         // @ts-ignore
         this.appSetting = this.app.setting;
@@ -62,6 +62,10 @@ export class ShareModal extends Modal {
         this.appPlugins = this.app.plugins;
         this.manager = manager;
         this.settings = manager.settings;
+        this.type = type;
+        if (this.type == "export") {
+            
+        }
         // 自动分类插件类型
         plugins.forEach(plugin => { if (this.isImportPlugin(plugin)) { this.importPlugins.push(plugin); } else { this.exportPlugins.push(plugin); } });
     }

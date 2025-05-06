@@ -25,7 +25,7 @@ export default class Agreement {
     async fetchCommunityPlugins() {
         // 从指定的 URL 获取社区插件列表的 JSON 数据
         const pluginList = await fetch(`https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json`).then(r => r.json());
-        if (!pluginList.ok) { new Notice(`[插件管理器] 无法连接到Github(跳转主页及下载不可用)`); }
+        // if (!pluginList.ok) { new Notice(`[插件管理器] 无法连接到Github(跳转主页及下载不可用)`); }
         // 创建一个空对象，用于存储以插件 ID 为键的插件信息
         const keyedPluginList: Record<string, any> = {};
         // 遍历插件列表，将每个插件的信息存储到 keyedPluginList 中
